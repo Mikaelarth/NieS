@@ -107,3 +107,8 @@ Optional migration scripts live in `database/migrations`. You can apply them wit
 ```sh
 ./database/migrate.sh <your_database> <your_user>
 ```
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
