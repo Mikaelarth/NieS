@@ -90,3 +90,20 @@ cmake ..
 make
 ctest --output-on-failure
 ```
+
+## Database Initialization
+
+The `database/schema` directory contains SQL scripts for creating the initial
+tables (`users`, `products`, `inventory` and `sales`). After creating your
+PostgreSQL database and editing `config.ini`, initialize the schema with:
+
+```sh
+psql -U <your_user> -d <your_database> -f database/schema/init.sql
+```
+
+Optional migration scripts live in `database/migrations`. You can apply them with
+`database/migrate.sh`:
+
+```sh
+./database/migrate.sh <your_database> <your_user>
+```
