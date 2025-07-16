@@ -66,3 +66,15 @@ Ce projet consiste à créer une application moderne et innovante de gestion de 
 ## Exemple d’Intégration
 
 * Exemple concret d’intégration Qt/C++ avec PostgreSQL (connexion, requêtes, gestion des erreurs).
+
+## Build and Run
+Ensure Qt 5 (or later) with Widgets and SQL modules is installed.
+
+```
+mkdir build && cd build
+cmake ../src
+make
+./NieSApp
+```
+
+Configure database parameters in `config.ini` before running.
