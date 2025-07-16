@@ -9,14 +9,30 @@ class DatabaseManagerTest : public QObject
     Q_OBJECT
 private slots:
     void connectionFailure();
+    void envPasswordOverride();
 };
 
 void DatabaseManagerTest::connectionFailure()
 {
+    qputenv("NIES_DB_HOST", QByteArray());
+    qputenv("NIES_DB_PORT", QByteArray());
+    qputenv("NIES_DB_NAME", QByteArray());
+    qputenv("NIES_DB_USER", QByteArray());
+    qputenv("NIES_DB_PASSWORD", QByteArray());
     DatabaseManager db;
     QVERIFY(!db.open());
     QVERIFY(!db.lastError().isEmpty());
     db.close();
+}
+
+void DatabaseManagerTest::envPasswordOverride()
+{
+    qputenv("NIES_DB_PASSWORD", QByteArray("dummy"));
+    DatabaseManager db;
+    QVERIFY(!db.open());
+    QVERIFY(!db.lastError().isEmpty());
+    db.close();
+    qputenv("NIES_DB_PASSWORD", QByteArray());
 }
 
 class SQLiteQueryTest : public QObject
