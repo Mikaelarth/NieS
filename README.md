@@ -72,9 +72,21 @@ Ensure Qt 5 (or later) with Widgets and SQL modules is installed.
 
 ```
 mkdir build && cd build
-cmake ../src
+cmake ..
 make
 ./NieSApp
 ```
 
 Configure database parameters in `config.ini` before running.
+
+## Running Tests
+
+The project uses **Qt Test**. Build the test executable and run tests with
+`ctest`:
+
+```
+mkdir build && cd build
+cmake ..
+make
+ctest --output-on-failure
+```
