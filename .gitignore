@@ -1,0 +1,20 @@
+# Build directories
+build/
+CMakeFiles/
+
+# CMake generated files
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Qt Creator generated files and folders
+*.user
+*.user.*
+*.pro.user
+*.pro.user.*
+*.qmake.stash
+.qtc/
+.qtcreator/
+
+# Object files
+*.o
