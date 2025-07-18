@@ -7,6 +7,10 @@ find_package(Qt5 COMPONENTS Test Sql REQUIRED)
 set(TEST_SOURCES
     database_test.cpp
     ${CMAKE_SOURCE_DIR}/src/DatabaseManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/UserManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/ProductManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/InventoryManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/SalesManager.cpp
 )
 
 add_executable(nies_tests ${TEST_SOURCES})
