@@ -11,6 +11,7 @@ add_executable(NieSApp
     main.cpp
     DatabaseManager.cpp
     UserManager.cpp
+    ProductManager.cpp
 )
 
 target_link_libraries(NieSApp Qt5::Widgets Qt5::Sql)
