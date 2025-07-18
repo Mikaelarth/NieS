@@ -10,6 +10,7 @@ find_package(Qt5 COMPONENTS Widgets Sql REQUIRED)
 add_executable(NieSApp
     main.cpp
     DatabaseManager.cpp
+    UserManager.cpp
 )
 
 target_link_libraries(NieSApp Qt5::Widgets Qt5::Sql)
