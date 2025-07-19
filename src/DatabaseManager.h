@@ -2,7 +2,7 @@
 #define DATABASEMANAGER_H
 
 #include <QObject>
-#include <QSqlDatabase>
+#include <QtSql/QSqlDatabase>
 #include <QSettings>
 #include <QString>
 

@@ -7,8 +7,8 @@
 #include <QTemporaryDir>
 #include <QProcess>
 #include <QRandomGenerator>
-#include <QSqlQuery>
-#include <QSqlRecord>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlRecord>
 #include <QFile>
 #include <QTextStream>
 

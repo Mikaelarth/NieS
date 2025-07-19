@@ -1,6 +1,6 @@
 #include "InventoryManager.h"
-#include <QSqlQuery>
-#include <QSqlError>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
 #include <QVariant>
 
 InventoryManager::InventoryManager(QObject *parent)

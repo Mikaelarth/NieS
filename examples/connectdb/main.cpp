@@ -1,8 +1,8 @@
 #include <QCoreApplication>
 #include <QSettings>
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlError>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
 #include <QDebug>
 
 int main(int argc, char *argv[])

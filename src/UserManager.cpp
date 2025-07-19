@@ -1,6 +1,6 @@
 #include "UserManager.h"
-#include <QSqlQuery>
-#include <QSqlError>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
 #include <QVariant>
 
 UserManager::UserManager(QObject *parent)
