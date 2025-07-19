@@ -71,9 +71,10 @@ make
 ./NieSApp
 ```
 
-Configure database parameters in `config.ini` before running. `DatabaseManager`
-looks for this file next to the executable by default. You may specify a custom
-location with the `NIES_CONFIG_PATH` environment variable or by passing a path
+Before running, duplicate `config.example.ini` as `config.ini` and configure
+your database parameters. `DatabaseManager` looks for this file next to the
+executable by default. You may specify a custom location with the
+`NIES_CONFIG_PATH` environment variable or by passing a path
 to the `DatabaseManager` constructor. You can also override individual
 connection settings via environment variables:
 
@@ -120,9 +121,9 @@ Optional migration scripts live in `database/migrations`. You can apply them wit
 
 If the application fails to connect to MySQL, check the following:
 
-1. **Configuration file available** – `config.ini` must be located next to the
-   executable or the path specified via the `NIES_CONFIG_PATH` environment
-   variable. Fill in actual values for `name`, `user` and `password`.
+1. **Configuration file available** – copy `config.example.ini` to `config.ini`
+   next to the executable (or the path specified via `NIES_CONFIG_PATH`) and
+   fill in actual values for `name`, `user` and `password`.
 2. **Environment overrides** – The variables `NIES_DB_HOST`, `NIES_DB_PORT`,
    `NIES_DB_NAME`, `NIES_DB_USER` and `NIES_DB_PASSWORD` can override settings at
    runtime. Ensure they are correct or unset.
