@@ -11,6 +11,11 @@ set(TEST_SOURCES
     pos_window_test.cpp
     sales_report_window_test.cpp
     main_window_test.cpp
+    return_manager_test.cpp
+    invoice_printer_test.cpp
+    payment_processor_test.cpp
+    dashboard_window_test.cpp
+    stock_prediction_test.cpp
     ${CMAKE_SOURCE_DIR}/src/DatabaseManager.cpp
     ${CMAKE_SOURCE_DIR}/src/UserManager.cpp
     ${CMAKE_SOURCE_DIR}/src/ProductManager.cpp
