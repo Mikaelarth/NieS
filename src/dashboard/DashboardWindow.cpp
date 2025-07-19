@@ -3,6 +3,8 @@
 #include "InventoryManager.h"
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QListWidget>
+#include <QTimer>
 #include <QVariantMap>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlDatabase>
@@ -24,6 +26,18 @@ DashboardWindow::DashboardWindow(SalesManager *sm, InventoryManager *im, QWidget
     m_stockLabel = new QLabel(this);
     m_stockLabel->setObjectName("stockLabel");
     layout->addWidget(m_stockLabel);
+
+    m_predictionList = new QListWidget(this);
+    m_predictionList->setObjectName("predictionList");
+    layout->addWidget(m_predictionList);
+
+    connect(&m_timer, &QTimer::timeout, this, &DashboardWindow::refreshPredictions);
+    m_timer.start(60000); // update every minute by default
+
+    if (m_sm)
+        connect(m_sm, SIGNAL(saleRecorded(int,int)), this, SLOT(refreshPredictions()));
+    if (m_im)
+        connect(m_im, SIGNAL(stockChanged(int,int)), this, SLOT(refreshPredictions()));
 
     refresh();
 }
@@ -55,5 +69,34 @@ void DashboardWindow::refresh()
         m_unitsLabel->setText(tr("Units sold: %1").arg(units));
     if (m_stockLabel)
         m_stockLabel->setText(tr("Stock on hand: %1").arg(stock));
+
+    refreshPredictions();
+}
+
+void DashboardWindow::refreshPredictions()
+{
+    if (!m_predictionList)
+        return;
+
+    m_predictionList->clear();
+
+    QSqlDatabase db = QSqlDatabase::database();
+    if (!db.isOpen())
+        return;
+
+    QSqlQuery q(db);
+    if (!q.exec("SELECT id, name FROM products"))
+        return;
+
+    while (q.next()) {
+        int pid = q.value(0).toInt();
+        QString name = q.value(1).toString();
+        int pred = m_prediction.predict(pid);
+        bool critical = m_prediction.isCritical(pid, 5);
+        QString text = tr("%1: predicted %2").arg(name).arg(pred);
+        if (critical)
+            text += tr(" - Low stock");
+        m_predictionList->addItem(text);
+    }
 }
 

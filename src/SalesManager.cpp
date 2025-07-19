@@ -59,6 +59,7 @@ bool SalesManager::recordSale(int productId, int quantity)
         return false;
     }
 
+    emit saleRecorded(productId, quantity);
     return true;
 }
 
