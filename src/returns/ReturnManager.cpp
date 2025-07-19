@@ -31,7 +31,8 @@ bool ReturnManager::recordReturn(int saleId, int quantity)
     }
 
     // Add stock back
-    QSqlQuery inv("UPDATE inventory SET quantity = quantity + :q WHERE product_id = :pid");
+    QSqlQuery inv;
+    inv.prepare("UPDATE inventory SET quantity = quantity + :q WHERE product_id = :pid");
     inv.bindValue(":q", quantity);
     inv.bindValue(":pid", productId);
     if (!inv.exec()) {
