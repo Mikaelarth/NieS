@@ -106,7 +106,7 @@ require a running database server.
 ## Database Initialization
 
 The `database/schema` directory contains SQL scripts for creating the initial
-tables (`users`, `products`, `inventory` and `sales`). After creating your
+tables (`users`, `products`, `inventory`, `sales` and `schema_migrations`). After creating your
 MySQL database and editing `config.ini`, initialize the schema with:
 
 ```sh
@@ -114,7 +114,9 @@ mysql -u <your_user> <your_database> < database/schema/init.sql
 ```
 
 Optional migration scripts live in `database/migrations`. You can apply them with
-`database/migrate.sh` which relies on the `mysql` command line tool:
+`database/migrate.sh`. The script relies on the `mysql` command line tool and
+records each successfully applied file name in the `schema_migrations` table so
+subsequent runs skip migrations that were already executed:
 
 ```sh
 ./database/migrate.sh <your_database> <your_user>

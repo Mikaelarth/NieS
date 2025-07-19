@@ -32,3 +32,7 @@ CREATE TABLE IF NOT EXISTS sales (
     total DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
 );
+
+CREATE TABLE IF NOT EXISTS schema_migrations (
+    filename VARCHAR(255) PRIMARY KEY
+);
