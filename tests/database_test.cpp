@@ -6,6 +6,7 @@
 #include "SalesManager.h"
 #include "login_test.h"
 #include "product_window_test.h"
+#include "pos_window_test.h"
 #include <QTemporaryDir>
 #include <QProcess>
 #include <QRandomGenerator>
@@ -670,6 +671,8 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&loginTest, argc, argv);
     ProductWindowTest productWindowTest;
     status |= QTest::qExec(&productWindowTest, argc, argv);
+    POSWindowTest posWindowTest;
+    status |= QTest::qExec(&posWindowTest, argc, argv);
     return status;
 }
 
