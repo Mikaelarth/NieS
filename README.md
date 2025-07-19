@@ -4,6 +4,8 @@
 
 Ce projet consiste à créer une application moderne et innovante de gestion de boutique ou de restaurant en utilisant les technologies Qt (C++ avec Qt Widgets/QML) et MySQL.
 
+Pour une description complète des objectifs et de la feuille de route, consultez le fichier [CAHIER_DE_CHARGE.md](CAHIER_DE_CHARGE.md).
+
 ## Fonctionnalités Implémentées
 
 Le projet en est à ses débuts. Les composants suivants sont disponibles :
