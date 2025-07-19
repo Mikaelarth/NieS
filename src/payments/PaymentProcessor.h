@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QString>
 
+// Basic payment handler used by the POS window. The current implementation
+// only simulates successful transactions. Integrate with a real payment
+// gateway to accept actual payments.
 class PaymentProcessor : public QObject
 {
     Q_OBJECT
