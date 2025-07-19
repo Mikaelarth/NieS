@@ -422,6 +422,69 @@ void SalesManagerTest::recordSaleUpdatesInventory()
     QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
 }
 
+class InventoryManagerTest : public QObject
+{
+    Q_OBJECT
+private slots:
+    void addStockExistingProduct();
+    void removeStockInsufficient();
+};
+
+void InventoryManagerTest::addStockExistingProduct()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(":memory:");
+    QVERIFY(db.open());
+
+    QSqlQuery query;
+    QVERIFY(query.exec("CREATE TABLE inventory("
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "product_id INTEGER,"
+                       "quantity INTEGER,"
+                       "last_update TEXT)"));
+    QVERIFY(query.exec("INSERT INTO inventory(product_id, quantity) VALUES(1, 5)"));
+
+    InventoryManager im;
+    QVERIFY2(im.addStock(1, 3), qPrintable(im.lastError()));
+
+    QVERIFY(query.exec("SELECT quantity FROM inventory WHERE product_id = 1"));
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toInt(), 8);
+
+    db.close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+
+void InventoryManagerTest::removeStockInsufficient()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(":memory:");
+    QVERIFY(db.open());
+
+    QSqlQuery query;
+    QVERIFY(query.exec("CREATE TABLE inventory("
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "product_id INTEGER,"
+                       "quantity INTEGER,"
+                       "last_update TEXT)"));
+    QVERIFY(query.exec("INSERT INTO inventory(product_id, quantity) VALUES(2, 2)"));
+
+    InventoryManager im;
+    QVERIFY(!im.removeStock(2, 5));
+    QCOMPARE(im.lastError(), QString("Insufficient stock"));
+
+    QVERIFY(query.exec("SELECT quantity FROM inventory WHERE product_id = 2"));
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toInt(), 2);
+
+    db.close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
@@ -437,6 +500,8 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&prodTest, argc, argv);
     SalesManagerTest salesTest;
     status |= QTest::qExec(&salesTest, argc, argv);
+    InventoryManagerTest invTest;
+    status |= QTest::qExec(&invTest, argc, argv);
     return status;
 }
 
