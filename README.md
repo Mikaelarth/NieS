@@ -112,6 +112,22 @@ Optional migration scripts live in `database/migrations`. You can apply them wit
 ./database/migrate.sh <your_database> <your_user>
 ```
 
+## Troubleshooting
+
+If the application fails to connect to MySQL, check the following:
+
+1. **Configuration file available** – `config.ini` must be located next to the
+   executable or the path specified via the `NIES_CONFIG_PATH` environment
+   variable. Fill in actual values for `name`, `user` and `password`.
+2. **Environment overrides** – The variables `NIES_DB_HOST`, `NIES_DB_PORT`,
+   `NIES_DB_NAME`, `NIES_DB_USER` and `NIES_DB_PASSWORD` can override settings at
+   runtime. Ensure they are correct or unset.
+3. **MySQL service running** – Verify your MySQL server is up and listening on
+   the configured host and port (e.g. `localhost:3306`).
+4. **Qt MySQL driver installed** – If you see “`QMYSQL driver not loaded`”, make
+   sure Qt's MySQL plugin (`qsqlmysql.dll` or `libqsqlmysql.so`) and the
+   corresponding `libmysql` client library are available in the search path.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).

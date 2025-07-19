@@ -46,6 +46,12 @@ bool DatabaseManager::open()
     m_db.setPassword(password);
     m_db.setPort(port);
 
+    if (dbName.isEmpty() || user.isEmpty()) {
+        m_lastError = QStringLiteral("Database settings are incomplete. "
+                                      "Check config.ini or environment variables.");
+        return false;
+    }
+
     if (!m_db.open()) {
         m_lastError = m_db.lastError().text();
         return false;
