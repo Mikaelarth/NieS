@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 class ProductWindow;
+class POSWindow;
 
 class MainWindow : public QMainWindow
 {
@@ -13,9 +14,11 @@ public:
 
 private slots:
     void openProducts();
+    void openPOS();
 
 private:
     ProductWindow *m_productWindow = nullptr;
+    POSWindow *m_posWindow = nullptr;
 };
 
 #endif // MAINWINDOW_H
