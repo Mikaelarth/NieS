@@ -100,6 +100,8 @@ class UserManagerTest : public QObject
 private slots:
     void createUser();
     void authenticateUser();
+    void updateUserRole();
+    void updateUserRoleNonexistent();
     void deleteUser();
     void deleteUserNonexistent();
 };
@@ -212,6 +214,58 @@ void UserManagerTest::deleteUserNonexistent()
 
     UserManager um;
     QVERIFY(!um.deleteUser("ghost"));
+
+    db.close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+
+void UserManagerTest::updateUserRole()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(":memory:");
+    QVERIFY(db.open());
+
+    QSqlQuery query;
+    QVERIFY(query.exec("CREATE TABLE users("
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "username TEXT UNIQUE,"
+                       "password_hash TEXT,"
+                       "password_salt TEXT,"
+                       "role TEXT,"
+                       "created_at TEXT)"));
+
+    UserManager um;
+    QVERIFY(um.createUser("dave", "pwd", "user"));
+    QVERIFY(um.updateUserRole("dave", "admin"));
+
+    QVERIFY(query.exec("SELECT role FROM users WHERE username='dave'"));
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toString(), QString("admin"));
+
+    db.close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+
+void UserManagerTest::updateUserRoleNonexistent()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(":memory:");
+    QVERIFY(db.open());
+
+    QSqlQuery query;
+    QVERIFY(query.exec("CREATE TABLE users("
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "username TEXT UNIQUE,"
+                       "password_hash TEXT,"
+                       "password_salt TEXT,"
+                       "role TEXT,"
+                       "created_at TEXT)"));
+    UserManager um;
+    QVERIFY(!um.updateUserRole("ghost", "admin"));
 
     db.close();
     QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
