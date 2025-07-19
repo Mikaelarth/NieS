@@ -1,4 +1,4 @@
-QT += widgets sql
+QT += widgets sql network
 CONFIG += c++11 console
 TEMPLATE = app
 TARGET = NieSApp
@@ -12,6 +12,7 @@ SOURCES += \
     src/SalesManager.cpp \
     src/login/LoginDialog.cpp \
     src/login/MainWindow.cpp
+    src/NetworkMonitor.cpp
 
 HEADERS += \
     src/DatabaseManager.h \
@@ -21,6 +22,7 @@ HEADERS += \
     src/SalesManager.h \
     src/login/LoginDialog.h \
     src/login/MainWindow.h
+    src/NetworkMonitor.h
 
 # Include config file for convenience
 OTHER_FILES += config.ini
