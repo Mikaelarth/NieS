@@ -10,10 +10,10 @@ class UserManager : public QObject
 public:
     explicit UserManager(QObject *parent = nullptr);
 
-    bool createUser(const QString &username, const QString &passwordHash, const QString &role);
+    bool createUser(const QString &username, const QString &password, const QString &role);
     bool deleteUser(const QString &username);
     bool updateUserRole(const QString &username, const QString &newRole);
-    bool authenticate(const QString &username, const QString &passwordHash);
+    bool authenticate(const QString &username, const QString &password);
 
     QString lastError() const;
 
