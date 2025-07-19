@@ -1,6 +1,6 @@
 #include "ProductManager.h"
-#include <QSqlQuery>
-#include <QSqlError>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
 #include <QVariant>
 
 ProductManager::ProductManager(QObject *parent)

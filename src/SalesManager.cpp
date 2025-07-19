@@ -1,6 +1,6 @@
 #include "SalesManager.h"
-#include <QSqlQuery>
-#include <QSqlError>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
 #include <QVariant>
 
 SalesManager::SalesManager(QObject *parent)

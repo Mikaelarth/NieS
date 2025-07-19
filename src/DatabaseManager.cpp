@@ -1,5 +1,5 @@
 #include "DatabaseManager.h"
-#include <QSqlError>
+#include <QtSql/QSqlError>
 #include <QProcessEnvironment>
 #include <QCoreApplication>
 
