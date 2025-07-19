@@ -14,9 +14,9 @@
 
 ### Nouvelles tâches
 - [ ] Améliorer l\'UI d\'authentification
-- [ ] Intégrer les paiements numériques
-- [ ] Générer un tableau de bord complet
-- [ ] Prédiction de stock et de ventes
+- [ ] Intégrer les paiements numériques *(PaymentProcessor ne fait qu\'une simulation – intégration d\'une passerelle réelle nécessaire)*
+- [ ] Générer un tableau de bord complet *(DashboardWindow n\'affiche encore qu\'un texte temporaire)*
+- [ ] Prédiction de stock et de ventes *(module `StockPrediction` basique, pas encore relié à l\'interface)*
 - [ ] Système de sauvegarde et synchronisation
 - [ ] API REST pour intégration e-commerce
 - [ ] Application mobile compagnon
