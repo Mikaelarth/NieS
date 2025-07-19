@@ -84,6 +84,14 @@ connection settings via environment variables:
 - `NIES_DB_USER` – database user
 - `NIES_DB_PASSWORD` – database password
 
+### Offline Mode
+
+Set `offline=true` in `config.ini` (or `NIES_DB_OFFLINE=1`) to work with a local
+SQLite file when the application cannot connect to MySQL. The file location is
+controlled by `offline_path` or the `NIES_DB_OFFLINE_PATH` environment
+variable. Call `DatabaseManager::synchronize()` once connectivity is restored to
+push pending records to the MySQL server.
+
 ## Running Tests
 
 The project uses **Qt Test**. Build the test executable and run tests with
