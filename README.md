@@ -4,46 +4,36 @@
 
 Ce projet consiste à créer une application moderne et innovante de gestion de boutique ou de restaurant en utilisant les technologies Qt (C++ avec Qt Widgets/QML) et PostgreSQL.
 
-## Fonctionnalités Principales
+## Fonctionnalités Implémentées
 
-### 1. Gestion des Ventes
+Le projet en est à ses débuts. Les composants suivants sont disponibles :
 
-* Interface intuitive pour un Point de Vente (POS) rapide.
-* Gestion complète des retours et remboursements.
-* Impression automatisée des factures.
+### Gestion des utilisateurs
 
-### 2. Gestion des Stocks
+* Création et authentification d'utilisateurs avec rôles.
 
-* Entrées et sorties automatiques.
-* Inventaire mis à jour en temps réel.
-* Alertes configurables pour seuil critique.
-* Option de gestion prédictive basée sur l'intelligence artificielle.
+### Gestion des produits
 
-### 3. Gestion Financière
+* Ajout, modification et suppression de produits.
 
-* Rapports quotidiens, hebdomadaires et mensuels.
-* Suivi détaillé des dépenses et revenus.
-* Calcul automatique des bénéfices nets.
+### Gestion des stocks
 
-### 4. Paiements Intégrés
+* Mises à jour d'inventaire (entrées et sorties).
 
+### Gestion des ventes
+
+* Enregistrement des ventes et mise à jour automatique du stock.
+
+## Planned Features
+
+Les fonctionnalités suivantes sont prévues mais **ne sont pas encore implémentées** :
+
+* Interface POS complète avec retours, remboursements et impression des factures.
+* Alertes de seuil critique et prédiction de stock basée sur l'intelligence artificielle.
+* Rapports financiers détaillés et calcul automatique des bénéfices.
 * Paiements numériques intégrés (cartes, mobile money, QR codes).
-* Sécurité renforcée des transactions financières.
-
-### 5. Gestion des Utilisateurs
-
-* Système robuste d’authentification.
-* Niveaux d’accès multiples : Administrateur, gestionnaire, vendeur.
-
-### 6. Tableaux de Bord Interactifs
-
-* Visualisation dynamique en temps réel.
-* Indicateurs clés de performances (ventes journalières, bénéfices, alertes de stock).
-
-### 7. Support Multi-utilisateurs en Réseau
-
-* Utilisation simultanée par plusieurs utilisateurs.
-* Transactions sécurisées et optimisées via PostgreSQL.
+* Tableaux de bord interactifs et indicateurs clés de performances.
+* Support multi-utilisateurs complet en réseau.
 
 ## Architecture Technique
 
