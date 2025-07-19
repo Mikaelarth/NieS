@@ -480,6 +480,13 @@ private slots:
     void removeStockInsufficient();
 };
 
+class OfflineSyncTest : public QObject
+{
+    Q_OBJECT
+private slots:
+    void syncNewRows();
+};
+
 void InventoryManagerTest::addStockExistingProduct()
 {
     if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
@@ -535,6 +542,55 @@ void InventoryManagerTest::removeStockInsufficient()
     QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
 }
 
+void OfflineSyncTest::syncNewRows()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+
+    QTemporaryDir dir;
+    QString localPath = dir.filePath("local.db");
+    QString remotePath = dir.filePath("remote.db");
+
+    qputenv("NIES_DB_OFFLINE", QByteArray("1"));
+    qputenv("NIES_DB_OFFLINE_PATH", localPath.toUtf8());
+    qputenv("NIES_DB_DRIVER", QByteArray("QSQLITE"));
+    qputenv("NIES_DB_NAME", remotePath.toUtf8());
+
+    DatabaseManager db;
+    QVERIFY(db.open());
+    QSqlQuery q;
+    QVERIFY(q.exec("CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT);"));
+    QVERIFY(q.exec("INSERT INTO users(name) VALUES('alice');"));
+    db.close();
+
+    QSqlDatabase remoteSetup = QSqlDatabase::addDatabase("QSQLITE", "setup");
+    remoteSetup.setDatabaseName(remotePath);
+    QVERIFY(remoteSetup.open());
+    QSqlQuery qr(remoteSetup);
+    QVERIFY(qr.exec("CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT);"));
+    remoteSetup.close();
+    QSqlDatabase::removeDatabase("setup");
+
+    QVERIFY(db.open());
+    QVERIFY(db.synchronize());
+    db.close();
+
+    QSqlDatabase verify = QSqlDatabase::addDatabase("QSQLITE", "verify");
+    verify.setDatabaseName(remotePath);
+    QVERIFY(verify.open());
+    QSqlQuery qv(verify);
+    QVERIFY(qv.exec("SELECT name FROM users"));
+    QVERIFY(qv.next());
+    QCOMPARE(qv.value(0).toString(), QString("alice"));
+    verify.close();
+    QSqlDatabase::removeDatabase("verify");
+
+    qunsetenv("NIES_DB_OFFLINE");
+    qunsetenv("NIES_DB_OFFLINE_PATH");
+    qunsetenv("NIES_DB_DRIVER");
+    qunsetenv("NIES_DB_NAME");
+}
+
 int main(int argc, char *argv[])
 {
     qputenv("QT_QPA_PLATFORM", QByteArray("offscreen"));
@@ -553,6 +609,8 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&salesTest, argc, argv);
     InventoryManagerTest invTest;
     status |= QTest::qExec(&invTest, argc, argv);
+    OfflineSyncTest offlineTest;
+    status |= QTest::qExec(&offlineTest, argc, argv);
     LoginDialogTest loginTest;
     status |= QTest::qExec(&loginTest, argc, argv);
     return status;
