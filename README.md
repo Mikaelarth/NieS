@@ -101,6 +101,12 @@ make
 ctest --output-on-failure
 ```
 
+Some tests start a temporary PostgreSQL server. By default the test suite
+expects `initdb` and `pg_ctl` in `/usr/lib/postgresql/16/bin`. Set the
+`NIES_INITDB_PATH` and `NIES_PG_CTL_PATH` environment variables to override
+these paths. If you cannot run PostgreSQL locally (for example because you lack
+root access), set `NIES_SKIP_PG_TESTS=1` to skip the PostgreSQL dependent tests.
+
 ## Database Initialization
 
 The `database/schema` directory contains SQL scripts for creating the initial

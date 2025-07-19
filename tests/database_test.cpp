@@ -78,8 +78,12 @@ private slots:
 
 static bool startPostgres(QTemporaryDir &dir, int port)
 {
-    QString initdb = "/usr/lib/postgresql/16/bin/initdb";
-    QString pgctl = "/usr/lib/postgresql/16/bin/pg_ctl";
+    QString initdb = QString::fromLocal8Bit(qgetenv("NIES_INITDB_PATH"));
+    if (initdb.isEmpty())
+        initdb = "/usr/lib/postgresql/16/bin/initdb";
+    QString pgctl = QString::fromLocal8Bit(qgetenv("NIES_PG_CTL_PATH"));
+    if (pgctl.isEmpty())
+        pgctl = "/usr/lib/postgresql/16/bin/pg_ctl";
 
     QProcess::execute("chown", {"-R", "postgres:postgres", dir.path()});
 
@@ -93,13 +97,17 @@ static bool startPostgres(QTemporaryDir &dir, int port)
 
 static void stopPostgres(const QString &dir)
 {
-    QString pgctl = "/usr/lib/postgresql/16/bin/pg_ctl";
+    QString pgctl = QString::fromLocal8Bit(qgetenv("NIES_PG_CTL_PATH"));
+    if (pgctl.isEmpty())
+        pgctl = "/usr/lib/postgresql/16/bin/pg_ctl";
     QStringList stopArgs{"-u", "postgres", "--", pgctl, "-D", dir, "-m", "fast", "-w", "stop"};
     QProcess::execute("runuser", stopArgs);
 }
 
 void PostgresTest::configPathEnv()
 {
+    if (!qEnvironmentVariableIsEmpty("NIES_SKIP_PG_TESTS"))
+        QSKIP("PostgreSQL tests skipped because NIES_SKIP_PG_TESTS is set");
     QTemporaryDir dbDir;
     QVERIFY(dbDir.isValid());
     int port = 54321 + static_cast<int>(QRandomGenerator::global()->bounded(1000));
@@ -137,6 +145,8 @@ void PostgresTest::configPathEnv()
 
 void PostgresTest::openSuccess()
 {
+    if (!qEnvironmentVariableIsEmpty("NIES_SKIP_PG_TESTS"))
+        QSKIP("PostgreSQL tests skipped because NIES_SKIP_PG_TESTS is set");
     QTemporaryDir dir;
     QVERIFY(dir.isValid());
     int port = 55432 + static_cast<int>(QRandomGenerator::global()->bounded(1000));
@@ -157,6 +167,8 @@ void PostgresTest::openSuccess()
 
 void PostgresTest::crudOperations()
 {
+    if (!qEnvironmentVariableIsEmpty("NIES_SKIP_PG_TESTS"))
+        QSKIP("PostgreSQL tests skipped because NIES_SKIP_PG_TESTS is set");
     QTemporaryDir dir;
     QVERIFY(dir.isValid());
     int port = 56500 + static_cast<int>(QRandomGenerator::global()->bounded(1000));
