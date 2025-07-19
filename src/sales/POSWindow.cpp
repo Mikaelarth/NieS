@@ -5,6 +5,14 @@
 #include "invoices/InvoicePrinter.h"
 #include "returns/ReturnManager.h"
 
+namespace {
+enum ProductRoles {
+    IdRole = Qt::UserRole,
+    PriceRole,
+    DiscountRole
+};
+}
+
 #include <QComboBox>
 #include <QSpinBox>
 #include <QPushButton>
@@ -64,22 +72,29 @@ void POSWindow::loadProducts()
         QString label = QString("%1 (%2)")
                              .arg(p.value("name").toString())
                              .arg(p.value("price").toDouble());
-        m_productBox->addItem(label, p.value("id"));
+        m_productBox->addItem(label);
+        int row = m_productBox->count() - 1;
+        m_productBox->setItemData(row, p.value("id"), IdRole);
+        m_productBox->setItemData(row, p.value("price"), PriceRole);
+        m_productBox->setItemData(row, p.value("discount"), DiscountRole);
     }
 }
 
 void POSWindow::onSell()
 {
-    int productId = m_productBox->currentData().toInt();
+    int row = m_productBox->currentIndex();
+    int productId = m_productBox->itemData(row, IdRole).toInt();
+    double price = m_productBox->itemData(row, PriceRole).toDouble();
+    double discount = m_productBox->itemData(row, DiscountRole).toDouble();
     int qty = m_qtySpin->value();
     if (productId <= 0 || qty <= 0)
         return;
+    double total = price * (1.0 - discount) * qty;
     if (!m_sm->recordSale(productId, qty)) {
         QMessageBox::warning(this, tr("Error"), m_sm->lastError());
         return;
     }
     const QString method = m_paymentBox->currentText();
-    double total = qty; // total value not known; placeholder
     if (method == tr("Card"))
         m_payments->processCard(total);
     else if (method == tr("Mobile Money"))
