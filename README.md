@@ -83,6 +83,8 @@ connection settings via environment variables:
 - `NIES_DB_NAME` – database name
 - `NIES_DB_USER` – database user
 - `NIES_DB_PASSWORD` – database password
+- `NIES_DB_DRIVER` – Qt SQL driver (e.g. `QMYSQL`, `QSQLITE`)
+- `NIES_DB_OFFLINE_PATH` – path to the offline SQLite file
 
 ### Offline Mode
 
@@ -91,6 +93,15 @@ SQLite file when the application cannot connect to MySQL. The file location is
 controlled by `offline_path` or the `NIES_DB_OFFLINE_PATH` environment
 variable. Call `DatabaseManager::synchronize()` once connectivity is restored to
 push pending records to the MySQL server.
+
+Example using environment variables:
+
+```bash
+NIES_DB_OFFLINE=1 NIES_DB_DRIVER=QSQLITE \
+NIES_DB_OFFLINE_PATH=mydata.db ./NieSApp
+```
+
+This runs the application entirely with the local SQLite file `mydata.db`.
 
 ## Running Tests
 
