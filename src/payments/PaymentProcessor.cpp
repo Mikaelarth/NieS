@@ -1,4 +1,5 @@
 #include "payments/PaymentProcessor.h"
+#include <QDebug>
 
 PaymentProcessor::PaymentProcessor(QObject *parent)
     : QObject(parent)
@@ -7,20 +8,35 @@ PaymentProcessor::PaymentProcessor(QObject *parent)
 
 bool PaymentProcessor::processCard(double amount)
 {
-    Q_UNUSED(amount);
-    // Here an actual card payment API would be called.
+    if (amount <= 0) {
+        m_lastError = tr("Invalid amount");
+        return false;
+    }
+
+    // Simulation of a real card payment. Replace with actual gateway call.
+    qDebug() << "Simulated card payment:" << amount;
     return true;
 }
 
 bool PaymentProcessor::processMobileMoney(double amount)
 {
-    Q_UNUSED(amount);
+    if (amount <= 0) {
+        m_lastError = tr("Invalid amount");
+        return false;
+    }
+
+    qDebug() << "Simulated mobile money payment:" << amount;
     return true;
 }
 
 bool PaymentProcessor::processQrCode(double amount)
 {
-    Q_UNUSED(amount);
+    if (amount <= 0) {
+        m_lastError = tr("Invalid amount");
+        return false;
+    }
+
+    qDebug() << "Simulated QR code payment:" << amount;
     return true;
 }
 

@@ -29,7 +29,7 @@ Le projet en est à ses débuts. Les composants suivants sont disponibles :
 * Enregistrement des ventes et mise à jour automatique du stock.
 * Gestion des retours et remboursements.
 * Impression de factures depuis le POS.
-* Paiements numériques (cartes, mobile money, QR codes).
+* Paiements numériques (cartes, mobile money, QR codes). Les transactions sont actuellement simulées.
 * Rapports financiers détaillés et calcul des bénéfices.
 * Tableaux de bord avec indicateurs clés (ventes, niveaux de stock).
 * Prédiction de stock et alertes de seuil critique.
@@ -115,6 +115,13 @@ The application loads translations from the `translations` directory next to the
 executable. Use `lupdate` to update the `.ts` files and `cmake` will compile
 them to `.qm` at build time. At runtime, `NieSApp` selects the translation that
 matches your system locale.
+
+### Payment Processing (Simulated)
+
+`PaymentProcessor` currently performs no real transactions. Calls to process
+card, mobile money or QR code payments simply log the amount and report success
+without contacting any external service. Integrate a payment gateway in this
+class to accept actual payments.
 
 ## Running Tests
 
