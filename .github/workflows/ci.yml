@@ -12,7 +12,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake g++ qtbase5-dev qttools5-dev qttools5-dev-tools libqt5sql5 libqt5sql5-psql libpq-dev postgresql
+          sudo apt-get install -y cmake g++ qtbase5-dev qttools5-dev qttools5-dev-tools libqt5sql5 libqt5sql5-psql
       - name: Configure
         run: cmake -B build -S .
       - name: Build
