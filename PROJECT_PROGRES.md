@@ -8,8 +8,8 @@
 - [x] Modules CRUD de base (utilisateurs, produits, stocks, ventes)
 - [ ] Créer l\'interface de gestion des produits
 - [ ] Mettre en place l\'écran de ventes (POS)
-- [ ] Suivi des migrations SQL
-- [ ] Activer le mode hors ligne et la synchronisation
+- [x] Suivi des migrations SQL
+- [x] Activer le mode hors ligne et la synchronisation
 - [ ] Améliorer l\'UI d\'authentification
 
 ## Notes et obstacles
