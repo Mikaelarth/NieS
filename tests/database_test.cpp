@@ -1,9 +1,10 @@
 #include <QtTest>
-#include <QCoreApplication>
+#include <QApplication>
 #include "DatabaseManager.h"
 #include "UserManager.h"
 #include "ProductManager.h"
 #include "SalesManager.h"
+#include "login_test.h"
 #include <QTemporaryDir>
 #include <QProcess>
 #include <QRandomGenerator>
@@ -536,7 +537,8 @@ void InventoryManagerTest::removeStockInsufficient()
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv);
+    qputenv("QT_QPA_PLATFORM", QByteArray("offscreen"));
+    QApplication app(argc, argv);
     int status = 0;
     DatabaseManagerTest dbTest;
     status |= QTest::qExec(&dbTest, argc, argv);
@@ -551,6 +553,8 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&salesTest, argc, argv);
     InventoryManagerTest invTest;
     status |= QTest::qExec(&invTest, argc, argv);
+    LoginDialogTest loginTest;
+    status |= QTest::qExec(&loginTest, argc, argv);
     return status;
 }
 

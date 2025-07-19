@@ -1,6 +1,9 @@
 #include <QApplication>
 #include <QMessageBox>
 #include "DatabaseManager.h"
+#include "UserManager.h"
+#include "login/LoginDialog.h"
+#include "login/MainWindow.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,8 +15,17 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    QMessageBox::information(nullptr, "Success", "Connected to database!");
+    UserManager userManager;
+    LoginDialog login(&userManager);
+    if (login.exec() != QDialog::Accepted) {
+        db.close();
+        return 0;
+    }
+
+    MainWindow mainWin;
+    mainWin.show();
+    int ret = app.exec();
 
     db.close();
-    return 0;
+    return ret;
 }
