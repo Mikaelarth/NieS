@@ -96,6 +96,9 @@ make
 ctest --output-on-failure
 ```
 
+This command executes the whole test suite and prints details when a test
+fails.
+
 Some tests previously started a temporary PostgreSQL server. These tests are
 currently disabled. The rest of the suite runs against SQLite and does not
 require a running database server.
