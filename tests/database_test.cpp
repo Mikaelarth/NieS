@@ -548,6 +548,7 @@ class OfflineSyncTest : public QObject
     Q_OBJECT
 private slots:
     void syncNewRows();
+    void syncDownloadUpdates();
 };
 
 void InventoryManagerTest::addStockExistingProduct()
@@ -645,6 +646,58 @@ void OfflineSyncTest::syncNewRows()
     QVERIFY(qv.exec("SELECT name FROM users"));
     QVERIFY(qv.next());
     QCOMPARE(qv.value(0).toString(), QString("alice"));
+    verify.close();
+    QSqlDatabase::removeDatabase("verify");
+
+    qunsetenv("NIES_DB_OFFLINE");
+    qunsetenv("NIES_DB_OFFLINE_PATH");
+    qunsetenv("NIES_DB_DRIVER");
+    qunsetenv("NIES_DB_NAME");
+}
+
+void OfflineSyncTest::syncDownloadUpdates()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+
+    QTemporaryDir dir;
+    QString localPath = dir.filePath("local.db");
+    QString remotePath = dir.filePath("remote.db");
+
+    qputenv("NIES_DB_OFFLINE", QByteArray("1"));
+    qputenv("NIES_DB_OFFLINE_PATH", localPath.toUtf8());
+    qputenv("NIES_DB_DRIVER", QByteArray("QSQLITE"));
+    qputenv("NIES_DB_NAME", remotePath.toUtf8());
+
+    // setup remote database
+    QSqlDatabase remoteSetup = QSqlDatabase::addDatabase("QSQLITE", "setup");
+    remoteSetup.setDatabaseName(remotePath);
+    QVERIFY(remoteSetup.open());
+    QSqlQuery qr(remoteSetup);
+    QVERIFY(qr.exec("CREATE TABLE inventory(id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INTEGER, quantity INTEGER, last_update TEXT);"));
+    QVERIFY(qr.exec("INSERT INTO inventory(id, product_id, quantity, last_update) VALUES(1,1,5,'2020-01-01 10:00:00');"));
+    remoteSetup.close();
+    QSqlDatabase::removeDatabase("setup");
+
+    DatabaseManager db;
+    QVERIFY(db.open());
+    QSqlQuery q;
+    QVERIFY(q.exec("CREATE TABLE inventory(id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INTEGER, quantity INTEGER, last_update TEXT);"));
+    QVERIFY(q.exec("INSERT INTO inventory(id, product_id, quantity, last_update) VALUES(1,1,2,'2020-01-01 09:00:00');"));
+    db.close();
+
+    QVERIFY(db.open());
+    QVERIFY(db.synchronize());
+    db.close();
+
+    QSqlDatabase verify = QSqlDatabase::addDatabase("QSQLITE", "verify");
+    verify.setDatabaseName(localPath);
+    QVERIFY(verify.open());
+    QSqlQuery qv(verify);
+    QVERIFY(qv.exec("SELECT quantity, last_update FROM inventory WHERE id=1"));
+    QVERIFY(qv.next());
+    QCOMPARE(qv.value(0).toInt(), 5);
+    QCOMPARE(qv.value(1).toString(), QString("2020-01-01 10:00:00"));
     verify.close();
     QSqlDatabase::removeDatabase("verify");
 
