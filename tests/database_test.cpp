@@ -372,6 +372,7 @@ class SalesManagerTest : public QObject
     Q_OBJECT
 private slots:
     void recordSaleUpdatesInventory();
+    void recordSaleRollbackOnFailure();
 };
 
 void SalesManagerTest::recordSaleUpdatesInventory()
@@ -422,6 +423,54 @@ void SalesManagerTest::recordSaleUpdatesInventory()
     QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
 }
 
+void SalesManagerTest::recordSaleRollbackOnFailure()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(":memory:");
+    QVERIFY(db.open());
+
+    QSqlQuery query;
+    QVERIFY(query.exec("CREATE TABLE products("
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "name TEXT,"
+                       "price REAL,"
+                       "discount REAL DEFAULT 0,"
+                       "created_at TEXT,"
+                       "updated_at TEXT)"));
+    QVERIFY(query.exec("CREATE TABLE inventory("
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "product_id INTEGER,"
+                       "quantity INTEGER,"
+                       "last_update TEXT)"));
+    QVERIFY(query.exec("CREATE TABLE sales("
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "product_id INTEGER,"
+                       "quantity INTEGER,"
+                       "sale_date TEXT,"
+                       "total REAL)"));
+
+    QVERIFY(query.exec("INSERT INTO products(name, price, discount) VALUES('Item', 2.0, 0.0)"));
+    int productId = query.lastInsertId().toInt();
+    QVERIFY(query.exec(QString("INSERT INTO inventory(product_id, quantity) VALUES(%1, 1)").arg(productId)));
+
+    SalesManager sm;
+    QVERIFY(!sm.recordSale(productId, 5));
+    QCOMPARE(sm.lastError(), QString("Insufficient stock"));
+
+    QVERIFY(query.exec("SELECT COUNT(*) FROM sales"));
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toInt(), 0);
+
+    QVERIFY(query.exec(QString("SELECT quantity FROM inventory WHERE product_id=%1").arg(productId)));
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toInt(), 1);
+
+    db.close();
+
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
 class InventoryManagerTest : public QObject
 {
     Q_OBJECT

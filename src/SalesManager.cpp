@@ -1,6 +1,7 @@
 #include "SalesManager.h"
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
+#include <QtSql/QSqlDatabase>
 #include <QVariant>
 
 SalesManager::SalesManager(QObject *parent)
@@ -10,6 +11,12 @@ SalesManager::SalesManager(QObject *parent)
 
 bool SalesManager::recordSale(int productId, int quantity)
 {
+    QSqlDatabase db = QSqlDatabase::database();
+    if (!db.transaction()) {
+        m_lastError = db.lastError().text();
+        return false;
+    }
+
     QSqlQuery priceQuery;
     priceQuery.prepare("SELECT price, discount FROM products WHERE id = ?");
     priceQuery.addBindValue(productId);
@@ -30,11 +37,19 @@ bool SalesManager::recordSale(int productId, int quantity)
     query.addBindValue(total);
     if (!query.exec()) {
         m_lastError = query.lastError().text();
+        db.rollback();
         return false;
     }
 
     if (!m_inventory.removeStock(productId, quantity)) {
         m_lastError = m_inventory.lastError();
+        db.rollback();
+        return false;
+    }
+
+    if (!db.commit()) {
+        m_lastError = db.lastError().text();
+        db.rollback();
         return false;
     }
 
