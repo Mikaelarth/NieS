@@ -9,6 +9,8 @@
 #include <QRandomGenerator>
 #include <QSqlQuery>
 #include <QSqlRecord>
+#include <QFile>
+#include <QTextStream>
 
 class DatabaseManagerTest : public QObject
 {
@@ -69,6 +71,7 @@ class PostgresTest : public QObject
 {
     Q_OBJECT
 private slots:
+    void configPathEnv();
     void openSuccess();
     void crudOperations();
 };
@@ -93,6 +96,43 @@ static void stopPostgres(const QString &dir)
     QString pgctl = "/usr/lib/postgresql/16/bin/pg_ctl";
     QStringList stopArgs{"-u", "postgres", "--", pgctl, "-D", dir, "-m", "fast", "-w", "stop"};
     QProcess::execute("runuser", stopArgs);
+}
+
+void PostgresTest::configPathEnv()
+{
+    QTemporaryDir dbDir;
+    QVERIFY(dbDir.isValid());
+    int port = 54321 + static_cast<int>(QRandomGenerator::global()->bounded(1000));
+    QVERIFY(startPostgres(dbDir, port));
+
+    QTemporaryDir confDir;
+    QVERIFY(confDir.isValid());
+    QString confPath = confDir.filePath("test.ini");
+    QFile file(confPath);
+    QVERIFY(file.open(QIODevice::WriteOnly | QIODevice::Text));
+    QTextStream ts(&file);
+    ts << "[database]\n";
+    ts << "host=localhost\n";
+    ts << "port=" << port << "\n";
+    ts << "name=postgres\n";
+    ts << "user=postgres\n";
+    ts << "password=\n";
+    file.close();
+
+    qunsetenv("NIES_DB_HOST");
+    qunsetenv("NIES_DB_PORT");
+    qunsetenv("NIES_DB_NAME");
+    qunsetenv("NIES_DB_USER");
+    qunsetenv("NIES_DB_PASSWORD");
+
+    qputenv("NIES_CONFIG_PATH", confPath.toLocal8Bit());
+
+    DatabaseManager db;
+    QVERIFY(db.open());
+    db.close();
+
+    qunsetenv("NIES_CONFIG_PATH");
+    stopPostgres(dbDir.path());
 }
 
 void PostgresTest::openSuccess()

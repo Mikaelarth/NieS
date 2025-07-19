@@ -1,11 +1,23 @@
 #include "DatabaseManager.h"
 #include <QSqlError>
 #include <QProcessEnvironment>
+#include <QCoreApplication>
 
-DatabaseManager::DatabaseManager(QObject *parent)
-    : QObject(parent), m_settings("config.ini", QSettings::IniFormat)
+DatabaseManager::DatabaseManager(const QString &configPath, QObject *parent)
+    : QObject(parent),
+      m_settings([&]() {
+          QString path = configPath;
+          if (path.isEmpty()) {
+              QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+              if (env.contains("NIES_CONFIG_PATH"))
+                  path = env.value("NIES_CONFIG_PATH");
+              else
+                  path = QCoreApplication::applicationDirPath() + "/config.ini";
+          }
+          return path;
+      }(), QSettings::IniFormat),
+      m_db(QSqlDatabase::addDatabase("QPSQL"))
 {
-    m_db = QSqlDatabase::addDatabase("QPSQL");
 }
 
 bool DatabaseManager::open()

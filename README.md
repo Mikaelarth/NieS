@@ -77,8 +77,11 @@ make
 ./NieSApp
 ```
 
-Configure database parameters in `config.ini` before running. You can also
-override any of the connection settings via environment variables:
+Configure database parameters in `config.ini` before running. `DatabaseManager`
+looks for this file next to the executable by default. You may specify a custom
+location with the `NIES_CONFIG_PATH` environment variable or by passing a path
+to the `DatabaseManager` constructor. You can also override individual
+connection settings via environment variables:
 
 - `NIES_DB_HOST` – database host
 - `NIES_DB_PORT` – database port
