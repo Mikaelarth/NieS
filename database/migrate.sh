@@ -14,7 +14,7 @@ fi
 for file in "$DIR"/migrations/*.sql; do
     [ -e "$file" ] || continue
     echo "Applying $file"
-    psql -d "$DB" -U "$USER" -f "$file"
+    mysql -u "$USER" "$DB" < "$file"
     if [ $? -ne 0 ]; then
         echo "Error applying $file"
         exit 1

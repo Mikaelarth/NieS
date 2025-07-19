@@ -67,6 +67,7 @@ void SQLiteQueryTest::simpleSelect()
     QSqlDatabase::removeDatabase("memdb");
 }
 
+/* PostgreSQL specific tests are disabled while the project targets MySQL.
 class PostgresTest : public QObject
 {
     Q_OBJECT
@@ -78,121 +79,18 @@ private slots:
 
 static bool startPostgres(QTemporaryDir &dir, int port)
 {
-    QString initdb = QString::fromLocal8Bit(qgetenv("NIES_INITDB_PATH"));
-    if (initdb.isEmpty())
-        initdb = "/usr/lib/postgresql/16/bin/initdb";
-    QString pgctl = QString::fromLocal8Bit(qgetenv("NIES_PG_CTL_PATH"));
-    if (pgctl.isEmpty())
-        pgctl = "/usr/lib/postgresql/16/bin/pg_ctl";
-
-    QProcess::execute("chown", {"-R", "postgres:postgres", dir.path()});
-
-    QStringList initArgs{"-u", "postgres", "--", initdb, "-D", dir.path(), "-A", "trust", "-U", "postgres", "--nosync"};
-    if (QProcess::execute("runuser", initArgs) != 0)
-        return false;
-
-    QStringList startArgs{"-u", "postgres", "--", pgctl, "-D", dir.path(), "-o", QString("-F -p %1").arg(port), "-w", "start"};
-    return QProcess::execute("runuser", startArgs) == 0;
+    return false;
 }
 
 static void stopPostgres(const QString &dir)
 {
-    QString pgctl = QString::fromLocal8Bit(qgetenv("NIES_PG_CTL_PATH"));
-    if (pgctl.isEmpty())
-        pgctl = "/usr/lib/postgresql/16/bin/pg_ctl";
-    QStringList stopArgs{"-u", "postgres", "--", pgctl, "-D", dir, "-m", "fast", "-w", "stop"};
-    QProcess::execute("runuser", stopArgs);
+    Q_UNUSED(dir);
 }
 
-void PostgresTest::configPathEnv()
-{
-    if (!qEnvironmentVariableIsEmpty("NIES_SKIP_PG_TESTS"))
-        QSKIP("PostgreSQL tests skipped because NIES_SKIP_PG_TESTS is set");
-    QTemporaryDir dbDir;
-    QVERIFY(dbDir.isValid());
-    int port = 54321 + static_cast<int>(QRandomGenerator::global()->bounded(1000));
-    QVERIFY(startPostgres(dbDir, port));
-
-    QTemporaryDir confDir;
-    QVERIFY(confDir.isValid());
-    QString confPath = confDir.filePath("test.ini");
-    QFile file(confPath);
-    QVERIFY(file.open(QIODevice::WriteOnly | QIODevice::Text));
-    QTextStream ts(&file);
-    ts << "[database]\n";
-    ts << "host=localhost\n";
-    ts << "port=" << port << "\n";
-    ts << "name=postgres\n";
-    ts << "user=postgres\n";
-    ts << "password=\n";
-    file.close();
-
-    qunsetenv("NIES_DB_HOST");
-    qunsetenv("NIES_DB_PORT");
-    qunsetenv("NIES_DB_NAME");
-    qunsetenv("NIES_DB_USER");
-    qunsetenv("NIES_DB_PASSWORD");
-
-    qputenv("NIES_CONFIG_PATH", confPath.toLocal8Bit());
-
-    DatabaseManager db;
-    QVERIFY(db.open());
-    db.close();
-
-    qunsetenv("NIES_CONFIG_PATH");
-    stopPostgres(dbDir.path());
-}
-
-void PostgresTest::openSuccess()
-{
-    if (!qEnvironmentVariableIsEmpty("NIES_SKIP_PG_TESTS"))
-        QSKIP("PostgreSQL tests skipped because NIES_SKIP_PG_TESTS is set");
-    QTemporaryDir dir;
-    QVERIFY(dir.isValid());
-    int port = 55432 + static_cast<int>(QRandomGenerator::global()->bounded(1000));
-    QVERIFY(startPostgres(dir, port));
-
-    qputenv("NIES_DB_HOST", QByteArray("localhost"));
-    qputenv("NIES_DB_PORT", QByteArray::number(port));
-    qputenv("NIES_DB_NAME", QByteArray("postgres"));
-    qputenv("NIES_DB_USER", QByteArray("postgres"));
-    qputenv("NIES_DB_PASSWORD", QByteArray());
-
-    DatabaseManager db;
-    QVERIFY(db.open());
-    db.close();
-
-    stopPostgres(dir.path());
-}
-
-void PostgresTest::crudOperations()
-{
-    if (!qEnvironmentVariableIsEmpty("NIES_SKIP_PG_TESTS"))
-        QSKIP("PostgreSQL tests skipped because NIES_SKIP_PG_TESTS is set");
-    QTemporaryDir dir;
-    QVERIFY(dir.isValid());
-    int port = 56500 + static_cast<int>(QRandomGenerator::global()->bounded(1000));
-    QVERIFY(startPostgres(dir, port));
-
-    qputenv("NIES_DB_HOST", QByteArray("localhost"));
-    qputenv("NIES_DB_PORT", QByteArray::number(port));
-    qputenv("NIES_DB_NAME", QByteArray("postgres"));
-    qputenv("NIES_DB_USER", QByteArray("postgres"));
-    qputenv("NIES_DB_PASSWORD", QByteArray());
-
-    DatabaseManager db;
-    QVERIFY(db.open());
-
-    QSqlQuery query(QSqlDatabase::database());
-    QVERIFY(query.exec("CREATE TABLE IF NOT EXISTS t(id SERIAL PRIMARY KEY, name TEXT);"));
-    QVERIFY(query.exec("INSERT INTO t(name) VALUES('Bob');"));
-    QVERIFY(query.exec("SELECT name FROM t WHERE id=1;"));
-    QVERIFY(query.next());
-    QCOMPARE(query.value(0).toString(), QString("Bob"));
-
-    db.close();
-    stopPostgres(dir.path());
-}
+void PostgresTest::configPathEnv() {}
+void PostgresTest::openSuccess() {}
+void PostgresTest::crudOperations() {}
+*/
 
 class UserManagerTest : public QObject
 {
@@ -329,8 +227,7 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&dbTest, argc, argv);
     SQLiteQueryTest queryTest;
     status |= QTest::qExec(&queryTest, argc, argv);
-    PostgresTest pgTest;
-    status |= QTest::qExec(&pgTest, argc, argv);
+    /* Postgres tests disabled */
     UserManagerTest userTest;
     status |= QTest::qExec(&userTest, argc, argv);
     ProductManagerTest prodTest;
