@@ -6,8 +6,8 @@
 - [x] Finaliser la connexion MySQL
 - [x] Implémenter l\'écran d\'authentification
 - [x] Modules CRUD de base (utilisateurs, produits, stocks, ventes)
-- [ ] Créer l\'interface de gestion des produits
-- [ ] Mettre en place l\'écran de ventes (POS)
+- [x] Créer l\'interface de gestion des produits
+- [x] Mettre en place l\'écran de ventes (POS)
 - [x] Suivi des migrations SQL
 - [x] Activer le mode hors ligne et la synchronisation
 - [ ] Améliorer l\'UI d\'authentification
