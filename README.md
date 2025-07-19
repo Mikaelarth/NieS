@@ -6,6 +6,8 @@ Ce projet consiste à créer une application moderne et innovante de gestion de 
 
 Pour une description complète des objectifs et de la feuille de route, consultez le fichier [CAHIER_DE_CHARGE.md](CAHIER_DE_CHARGE.md).
 
+Le suivi de l'avancement est disponible dans [PROJECT_PROGRES.md](PROJECT_PROGRES.md). N'hésitez pas à le consulter et à le mettre à jour.
+
 ## Fonctionnalités Implémentées
 
 Le projet en est à ses débuts. Les composants suivants sont disponibles :
