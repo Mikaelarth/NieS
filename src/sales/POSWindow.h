@@ -8,6 +8,9 @@ class QSpinBox;
 class QPushButton;
 class ProductManager;
 class SalesManager;
+class PaymentProcessor;
+class InvoicePrinter;
+class ReturnManager;
 
 class POSWindow : public QWidget
 {
@@ -20,6 +23,8 @@ public slots:
 
 private slots:
     void onSell();
+    void onReturn();
+    void onPrintInvoice();
 
 private:
     ProductManager *m_pm;
@@ -27,6 +32,12 @@ private:
     QComboBox *m_productBox;
     QSpinBox *m_qtySpin;
     QPushButton *m_sellBtn;
+    QComboBox *m_paymentBox;
+    QPushButton *m_returnBtn;
+    QPushButton *m_invoiceBtn;
+    PaymentProcessor *m_payments;
+    InvoicePrinter *m_printer;
+    ReturnManager *m_returns;
 };
 
 #endif // POSWINDOW_H

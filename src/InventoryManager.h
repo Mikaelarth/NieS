@@ -12,6 +12,8 @@ public:
 
     bool addStock(int productId, int quantity);
     bool removeStock(int productId, int quantity);
+    int currentStock(int productId) const;
+    bool isCritical(int productId, int threshold) const;
 
     QString lastError() const;
 

@@ -76,6 +76,17 @@ QList<QVariantMap> SalesManager::salesReport()
     return sales;
 }
 
+QVariantMap SalesManager::financialReport()
+{
+    QVariantMap report;
+    QSqlQuery q("SELECT SUM(total) as revenue, SUM(quantity) as units FROM sales");
+    if (q.exec() && q.next()) {
+        report.insert("revenue", q.value(0));
+        report.insert("units", q.value(1));
+    }
+    return report;
+}
+
 QString SalesManager::lastError() const
 {
     return m_lastError;

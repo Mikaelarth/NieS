@@ -27,16 +27,17 @@ Le projet en est à ses débuts. Les composants suivants sont disponibles :
 ### Gestion des ventes
 
 * Enregistrement des ventes et mise à jour automatique du stock.
+* Gestion des retours et remboursements.
+* Impression de factures depuis le POS.
+* Paiements numériques (cartes, mobile money, QR codes).
+* Rapports financiers détaillés et calcul des bénéfices.
+* Tableaux de bord avec indicateurs clés (ventes, niveaux de stock).
+* Prédiction de stock et alertes de seuil critique.
+* Support multi‑utilisateurs connecté à une base de données partagée.
 
 ## Planned Features
 
-Les fonctionnalités suivantes sont prévues mais **ne sont pas encore implémentées** :
-
-* Interface POS complète avec retours, remboursements et impression des factures.
-* Alertes de seuil critique et prédiction de stock basée sur l'intelligence artificielle.
-* Rapports financiers détaillés et calcul automatique des bénéfices.
-* Paiements numériques intégrés (cartes, mobile money, QR codes).
-* Tableaux de bord interactifs et indicateurs clés de performances.
+Les prochaines étapes concerneront l'amélioration de l'ergonomie et des tests automatisés.
 * Support multi-utilisateurs complet en réseau.
 
 ## Architecture Technique
