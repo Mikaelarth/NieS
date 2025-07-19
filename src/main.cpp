@@ -4,6 +4,7 @@
 #include <QTranslator>
 #include "DatabaseManager.h"
 #include "UserManager.h"
+#include "UserSession.h"
 #include "login/LoginDialog.h"
 #include "login/MainWindow.h"
 #include "NetworkMonitor.h"
@@ -33,13 +34,14 @@ int main(int argc, char *argv[])
     });
 
     UserManager userManager;
-    LoginDialog login(&userManager);
+    UserSession session(&userManager, &userManager);
+    LoginDialog login(&session);
     if (login.exec() != QDialog::Accepted) {
         db.close();
         return 0;
     }
 
-    MainWindow mainWin(&userManager);
+    MainWindow mainWin(&session);
     mainWin.show();
     int ret = app.exec();
 

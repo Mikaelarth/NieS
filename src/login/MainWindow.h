@@ -6,14 +6,14 @@
 class ProductWindow;
 class POSWindow;
 class SalesReportWindow;
-class UserManager;
+class UserSession;
 class QAction;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit MainWindow(UserManager *userManager, QWidget *parent = nullptr);
+    explicit MainWindow(UserSession *session, QWidget *parent = nullptr);
 
 private slots:
     void openProducts();
@@ -22,7 +22,7 @@ private slots:
 
 private:
     void updatePermissions();
-    UserManager *m_userManager;
+    UserSession *m_session;
     QAction *m_manageAct = nullptr;
     QAction *m_posAct = nullptr;
     QAction *m_reportAct = nullptr;

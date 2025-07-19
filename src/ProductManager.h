@@ -5,11 +5,13 @@
 #include <QList>
 #include <QVariantMap>
 
+class UserSession;
+
 class ProductManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit ProductManager(QObject *parent = nullptr);
+    explicit ProductManager(UserSession *session = nullptr, QObject *parent = nullptr);
 
     bool addProduct(const QString &name, double price, double discount = 0.0);
     bool updateProduct(int id, const QString &name, double price, double discount);
@@ -20,6 +22,7 @@ public:
 
 private:
     QString m_lastError;
+    UserSession *m_session = nullptr;
 };
 
 #endif // PRODUCTMANAGER_H

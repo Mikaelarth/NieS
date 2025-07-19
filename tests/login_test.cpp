@@ -4,6 +4,7 @@
 #include <QtSql/QSqlQuery>
 #include "login/LoginDialog.h"
 #include "UserManager.h"
+#include "UserSession.h"
 #include "login_test.h"
 
 void LoginDialogTest::invalidCredentials()
@@ -25,9 +26,10 @@ void LoginDialogTest::invalidCredentials()
                "created_at TEXT)"));
 
     UserManager um;
+    UserSession session(&um, &um);
     QVERIFY(um.createUser("user", "pass", "role"));
 
-    LoginDialog dlg(&um, nullptr, false);
+    LoginDialog dlg(&session, nullptr, false);
     QVERIFY(!dlg.attemptLogin("user", "wrong"));
 
     db.close();
@@ -53,9 +55,10 @@ void LoginDialogTest::validCredentials()
                "created_at TEXT)"));
 
     UserManager um;
+    UserSession session(&um, &um);
     QVERIFY(um.createUser("bob", "secret", "role"));
 
-    LoginDialog dlg(&um, nullptr, false);
+    LoginDialog dlg(&session, nullptr, false);
     QVERIFY(dlg.attemptLogin("bob", "secret"));
 
     db.close();

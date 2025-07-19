@@ -1,15 +1,21 @@
 #include "ProductManager.h"
+#include "UserSession.h"
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
 #include <QVariant>
 
-ProductManager::ProductManager(QObject *parent)
-    : QObject(parent)
+ProductManager::ProductManager(UserSession *session, QObject *parent)
+    : QObject(parent), m_session(session)
 {
 }
 
 bool ProductManager::addProduct(const QString &name, double price, double discount)
 {
+    if (m_session && !m_session->hasRole("admin")) {
+        m_lastError = QStringLiteral("Permission denied");
+        return false;
+    }
+
     QSqlQuery query;
     query.prepare("INSERT INTO products(name, price, discount) VALUES(:name, :price, :discount)");
     query.bindValue(":name", name);
@@ -24,6 +30,11 @@ bool ProductManager::addProduct(const QString &name, double price, double discou
 
 bool ProductManager::updateProduct(int id, const QString &name, double price, double discount)
 {
+    if (m_session && !m_session->hasRole("admin")) {
+        m_lastError = QStringLiteral("Permission denied");
+        return false;
+    }
+
     QSqlQuery query;
     query.prepare("UPDATE products SET name = :name, price = :price, discount = :discount, updated_at = CURRENT_TIMESTAMP WHERE id = :id");
     query.bindValue(":name", name);
@@ -39,6 +50,11 @@ bool ProductManager::updateProduct(int id, const QString &name, double price, do
 
 bool ProductManager::deleteProduct(int id)
 {
+    if (m_session && !m_session->hasRole("admin")) {
+        m_lastError = QStringLiteral("Permission denied");
+        return false;
+    }
+
     QSqlQuery query;
     query.prepare("DELETE FROM products WHERE id = :id");
     query.bindValue(":id", id);

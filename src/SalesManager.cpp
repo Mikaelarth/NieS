@@ -1,16 +1,22 @@
 #include "SalesManager.h"
+#include "UserSession.h"
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
 #include <QtSql/QSqlDatabase>
 #include <QVariant>
 
-SalesManager::SalesManager(QObject *parent)
-    : QObject(parent)
+SalesManager::SalesManager(UserSession *session, QObject *parent)
+    : QObject(parent), m_session(session), m_inventory(session, this)
 {
 }
 
 bool SalesManager::recordSale(int productId, int quantity)
 {
+    if (m_session && !m_session->hasAnyRole({"seller", "admin"})) {
+        m_lastError = QStringLiteral("Permission denied");
+        return false;
+    }
+
     QSqlDatabase db = QSqlDatabase::database();
     if (!db.transaction()) {
         m_lastError = db.lastError().text();
@@ -58,6 +64,10 @@ bool SalesManager::recordSale(int productId, int quantity)
 
 QList<QVariantMap> SalesManager::salesReport()
 {
+    if (m_session && !m_session->hasRole("admin")) {
+        m_lastError = QStringLiteral("Permission denied");
+        return {};
+    }
     QList<QVariantMap> sales;
     QSqlQuery query("SELECT id, product_id, quantity, sale_date, total FROM sales ORDER BY sale_date DESC");
     if (!query.exec()) {
@@ -78,6 +88,8 @@ QList<QVariantMap> SalesManager::salesReport()
 
 QVariantMap SalesManager::financialReport()
 {
+    if (m_session && !m_session->hasRole("admin"))
+        return {};
     QVariantMap report;
     QSqlQuery q("SELECT SUM(total) as revenue, SUM(quantity) as units FROM sales");
     if (q.exec() && q.next()) {

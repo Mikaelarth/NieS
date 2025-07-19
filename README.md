@@ -34,6 +34,9 @@ Le projet en est à ses débuts. Les composants suivants sont disponibles :
 * Tableaux de bord avec indicateurs clés (ventes, niveaux de stock).
 * Prédiction de stock et alertes de seuil critique.
 * Support multi‑utilisateurs connecté à une base de données partagée.
+* Gestion de sessions utilisateur avec vérification des rôles lors des
+  opérations sensibles (ajout de produits, mouvements de stock ou
+  enregistrement des ventes).
 * Interface multilingue basée sur les fichiers de traduction Qt.
 
 ## Planned Features
@@ -122,6 +125,15 @@ matches your system locale.
 card, mobile money or QR code payments simply log the amount and report success
 without contacting any external service. Integrate a payment gateway in this
 class to accept actual payments.
+
+### User Sessions and Permissions
+
+Chaque client ouvre sa propre session via `LoginDialog`. Les actions des
+gestionnaires s'appuient désormais sur la classe `UserSession` pour vérifier le
+rôle courant. Seuls les administrateurs peuvent modifier les produits ou les
+stocks, tandis que les vendeurs peuvent enregistrer des ventes. Plusieurs
+instances de l'application peuvent ainsi se connecter simultanément à la même
+base MySQL en toute sécurité.
 
 ## Running Tests
 

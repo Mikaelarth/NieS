@@ -10,6 +10,7 @@ SOURCES += \
     src/ProductManager.cpp \
     src/InventoryManager.cpp \
     src/SalesManager.cpp \
+    src/UserSession.cpp \
     src/login/LoginDialog.cpp \
     src/login/MainWindow.cpp
     src/NetworkMonitor.cpp
@@ -20,6 +21,7 @@ HEADERS += \
     src/ProductManager.h \
     src/InventoryManager.h \
     src/SalesManager.h \
+    src/UserSession.h \
     src/login/LoginDialog.h \
     src/login/MainWindow.h
     src/NetworkMonitor.h

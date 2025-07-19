@@ -31,6 +31,7 @@ set(TEST_SOURCES
     ${CMAKE_SOURCE_DIR}/src/dashboard/DashboardWindow.cpp
     ${CMAKE_SOURCE_DIR}/src/login/LoginDialog.cpp
     ${CMAKE_SOURCE_DIR}/src/login/MainWindow.cpp
+    ${CMAKE_SOURCE_DIR}/src/UserSession.cpp
 )
 
 add_executable(nies_tests ${TEST_SOURCES})

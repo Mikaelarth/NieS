@@ -5,6 +5,7 @@
 
 #include "login/MainWindow.h"
 #include "UserManager.h"
+#include "UserSession.h"
 #include "main_window_test.h"
 #include <QAction>
 
@@ -44,10 +45,11 @@ void MainWindowTest::adminFullAccess()
 {
     ScopedDb scoped;
     UserManager um;
+    UserSession session(&um, &um);
     QVERIFY(um.createUser("admin", "pw", "admin"));
-    QVERIFY(um.authenticate("admin", "pw"));
+    QVERIFY(session.login("admin", "pw"));
 
-    MainWindow win(&um);
+    MainWindow win(&session);
     win.show();
     QVERIFY(QTest::qWaitForWindowExposed(&win));
 
@@ -62,10 +64,11 @@ void MainWindowTest::sellerLimitedAccess()
 {
     ScopedDb scoped;
     UserManager um;
+    UserSession session(&um, &um);
     QVERIFY(um.createUser("sell", "pw", "seller"));
-    QVERIFY(um.authenticate("sell", "pw"));
+    QVERIFY(session.login("sell", "pw"));
 
-    MainWindow win(&um);
+    MainWindow win(&session);
     win.show();
     QVERIFY(QTest::qWaitForWindowExposed(&win));
 
@@ -80,10 +83,11 @@ void MainWindowTest::viewerNoAccess()
 {
     ScopedDb scoped;
     UserManager um;
+    UserSession session(&um, &um);
     QVERIFY(um.createUser("view", "pw", "viewer"));
-    QVERIFY(um.authenticate("view", "pw"));
+    QVERIFY(session.login("view", "pw"));
 
-    MainWindow win(&um);
+    MainWindow win(&session);
     win.show();
     QVERIFY(QTest::qWaitForWindowExposed(&win));
 
