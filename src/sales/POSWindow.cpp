@@ -19,6 +19,7 @@ enum ProductRoles {
 #include <QVBoxLayout>
 #include <QFormLayout>
 #include <QMessageBox>
+#include <QInputDialog>
 
 POSWindow::POSWindow(ProductManager *pm, SalesManager *sm, QWidget *parent)
     : QWidget(parent),
@@ -106,7 +107,21 @@ void POSWindow::onSell()
 
 void POSWindow::onReturn()
 {
-    // In a real application we would select a sale to return
+    bool ok = false;
+    int saleId = QInputDialog::getInt(this, tr("Return"), tr("Sale ID"), 1, 1, 1000000, 1, &ok);
+    if (!ok)
+        return;
+
+    int qty = QInputDialog::getInt(this, tr("Return"), tr("Quantity"), 1, 1, 1000000, 1, &ok);
+    if (!ok)
+        return;
+
+    if (!m_returns->recordReturn(saleId, qty)) {
+        QMessageBox::warning(this, tr("Error"), m_returns->lastError());
+        return;
+    }
+
+    loadProducts();
     QMessageBox::information(this, tr("Return"), tr("Return processed."));
 }
 
