@@ -1,14 +1,14 @@
 #include "LoginDialog.h"
-#include "UserManager.h"
+#include "UserSession.h"
 #include <QLineEdit>
 #include <QPushButton>
 #include <QFormLayout>
 #include <QVBoxLayout>
 #include <QMessageBox>
 
-LoginDialog::LoginDialog(UserManager *userManager, QWidget *parent, bool showErrors)
+LoginDialog::LoginDialog(UserSession *session, QWidget *parent, bool showErrors)
     : QDialog(parent),
-      m_userManager(userManager),
+      m_session(session),
       m_showErrors(showErrors)
 {
     setWindowTitle(tr("Login"));
@@ -36,14 +36,15 @@ void LoginDialog::onLoginClicked()
 
 bool LoginDialog::attemptLogin(const QString &username, const QString &password)
 {
-    if (m_userManager->authenticate(username, password)) {
+    if (m_session && m_session->login(username, password)) {
         emit loginSuccessful();
         accept();
         return true;
     }
 
     if (m_showErrors) {
-        QMessageBox::warning(this, tr("Login failed"), m_userManager->lastError());
+        QString err = m_session ? m_session->lastError() : QString();
+        QMessageBox::warning(this, tr("Login failed"), err);
     }
     return false;
 }

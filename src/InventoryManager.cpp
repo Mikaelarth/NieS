@@ -1,20 +1,29 @@
 #include "InventoryManager.h"
+#include "UserSession.h"
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
 #include <QVariant>
 
-InventoryManager::InventoryManager(QObject *parent)
-    : QObject(parent)
+InventoryManager::InventoryManager(UserSession *session, QObject *parent)
+    : QObject(parent), m_session(session)
 {
 }
 
 bool InventoryManager::addStock(int productId, int quantity)
 {
+    if (m_session && !m_session->hasRole("admin")) {
+        m_lastError = QStringLiteral("Permission denied");
+        return false;
+    }
     return updateStock(productId, quantity);
 }
 
 bool InventoryManager::removeStock(int productId, int quantity)
 {
+    if (m_session && !m_session->hasRole("admin")) {
+        m_lastError = QStringLiteral("Permission denied");
+        return false;
+    }
     return updateStock(productId, -quantity);
 }
 

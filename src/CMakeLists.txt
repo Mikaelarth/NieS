@@ -25,6 +25,7 @@ add_executable(NieSApp
     login/LoginDialog.cpp
     login/MainWindow.cpp
     NetworkMonitor.cpp
+    UserSession.cpp
 )
 
 target_link_libraries(NieSApp Qt5::Widgets Qt5::Sql Qt5::Network)

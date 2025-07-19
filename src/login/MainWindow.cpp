@@ -4,14 +4,14 @@
 #include "sales/SalesReportWindow.h"
 #include "ProductManager.h"
 #include "SalesManager.h"
-#include "UserManager.h"
+#include "UserSession.h"
 #include <QMenuBar>
 #include <QMenu>
 #include <QAction>
 
-MainWindow::MainWindow(UserManager *userManager, QWidget *parent)
+MainWindow::MainWindow(UserSession *session, QWidget *parent)
     : QMainWindow(parent),
-      m_userManager(userManager)
+      m_session(session)
 {
     setWindowTitle(tr("NieS"));
 
@@ -35,7 +35,7 @@ MainWindow::MainWindow(UserManager *userManager, QWidget *parent)
 void MainWindow::openProducts()
 {
     if (!m_productWindow)
-        m_productWindow = new ProductWindow(new ProductManager(this), this);
+        m_productWindow = new ProductWindow(new ProductManager(m_session, this), this);
     m_productWindow->show();
     m_productWindow->raise();
     m_productWindow->activateWindow();
@@ -44,7 +44,7 @@ void MainWindow::openProducts()
 void MainWindow::openPOS()
 {
     if (!m_posWindow)
-        m_posWindow = new POSWindow(new ProductManager(this), new SalesManager(this), this);
+        m_posWindow = new POSWindow(new ProductManager(m_session, this), new SalesManager(m_session, this), this);
     m_posWindow->show();
     m_posWindow->raise();
     m_posWindow->activateWindow();
@@ -53,7 +53,7 @@ void MainWindow::openPOS()
 void MainWindow::openReport()
 {
     if (!m_reportWindow)
-        m_reportWindow = new SalesReportWindow(new SalesManager(this), this);
+        m_reportWindow = new SalesReportWindow(new SalesManager(m_session, this), this);
     m_reportWindow->show();
     m_reportWindow->raise();
     m_reportWindow->activateWindow();
@@ -61,7 +61,7 @@ void MainWindow::openReport()
 
 void MainWindow::updatePermissions()
 {
-    const QString role = m_userManager ? m_userManager->currentRole() : QString();
+    const QString role = m_session ? m_session->role() : QString();
     if (role != "admin")
         m_manageAct->setEnabled(false);
     if (role != "seller" && role != "admin")

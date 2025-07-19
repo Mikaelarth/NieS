@@ -5,13 +5,13 @@
 
 class QLineEdit;
 class QPushButton;
-class UserManager;
+class UserSession;
 
 class LoginDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit LoginDialog(UserManager *userManager, QWidget *parent = nullptr, bool showErrors = true);
+    explicit LoginDialog(UserSession *session, QWidget *parent = nullptr, bool showErrors = true);
 
     bool attemptLogin(const QString &username, const QString &password);
 
@@ -22,7 +22,7 @@ private slots:
     void onLoginClicked();
 
 private:
-    UserManager *m_userManager;
+    UserSession *m_session;
     QLineEdit *m_usernameEdit;
     QLineEdit *m_passwordEdit;
     QPushButton *m_loginButton;
