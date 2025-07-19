@@ -11,8 +11,8 @@ SalesManager::SalesManager(QObject *parent)
 bool SalesManager::recordSale(int productId, int quantity)
 {
     QSqlQuery priceQuery;
-    priceQuery.prepare("SELECT price FROM products WHERE id = :id");
-    priceQuery.bindValue(":id", productId);
+    priceQuery.prepare("SELECT price, discount FROM products WHERE id = ?");
+    priceQuery.addBindValue(productId);
     if (!priceQuery.exec() || !priceQuery.next()) {
         m_lastError = priceQuery.lastError().text();
         if (m_lastError.isEmpty())
@@ -20,13 +20,14 @@ bool SalesManager::recordSale(int productId, int quantity)
         return false;
     }
     double price = priceQuery.value(0).toDouble();
-    double total = price * quantity;
+    double discount = priceQuery.value(1).toDouble();
+    double total = price * (1.0 - discount) * quantity;
 
     QSqlQuery query;
-    query.prepare("INSERT INTO sales(product_id, quantity, total) VALUES(:pid, :qty, :total)");
-    query.bindValue(":pid", productId);
-    query.bindValue(":qty", quantity);
-    query.bindValue(":total", total);
+    query.prepare("INSERT INTO sales(product_id, quantity, total) VALUES(?, ?, ?)");
+    query.addBindValue(productId);
+    query.addBindValue(quantity);
+    query.addBindValue(total);
     if (!query.exec()) {
         m_lastError = query.lastError().text();
         return false;

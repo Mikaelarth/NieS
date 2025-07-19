@@ -249,17 +249,17 @@ void SalesManagerTest::recordSaleUpdatesInventory()
                        "sale_date TEXT,"
                        "total REAL)"));
 
-    QVERIFY(query.exec("INSERT INTO products(name, price, discount) VALUES('Thing', 10.0, 0.0)"));
+    QVERIFY(query.exec("INSERT INTO products(name, price, discount) VALUES('Thing', 10.0, 0.1)"));
     int productId = query.lastInsertId().toInt();
     QVERIFY(query.exec(QString("INSERT INTO inventory(product_id, quantity) VALUES(%1, 10)").arg(productId)));
 
     SalesManager sm;
-    QVERIFY(sm.recordSale(productId, 3));
+    QVERIFY2(sm.recordSale(productId, 3), qPrintable(sm.lastError()));
 
     QVERIFY(query.exec("SELECT quantity, total FROM sales WHERE id=1"));
     QVERIFY(query.next());
     QCOMPARE(query.value(0).toInt(), 3);
-    QCOMPARE(query.value(1).toDouble(), 30.0);
+    QCOMPARE(query.value(1).toDouble(), 27.0);
 
     QVERIFY(query.exec(QString("SELECT quantity FROM inventory WHERE product_id=%1").arg(productId)));
     QVERIFY(query.next());
