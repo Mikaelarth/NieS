@@ -6,6 +6,8 @@
 class SalesManager;
 class InventoryManager;
 
+class QLabel;
+
 class DashboardWindow : public QWidget
 {
     Q_OBJECT
@@ -18,6 +20,9 @@ public slots:
 private:
     SalesManager *m_sm;
     InventoryManager *m_im;
+    QLabel *m_revenueLabel = nullptr;
+    QLabel *m_unitsLabel = nullptr;
+    QLabel *m_stockLabel = nullptr;
 };
 
 #endif // DASHBOARDWINDOW_H
