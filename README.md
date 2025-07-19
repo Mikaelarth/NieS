@@ -95,6 +95,10 @@ SQLite file when the application cannot connect to MySQL. The file location is
 controlled by `offline_path` or the `NIES_DB_OFFLINE_PATH` environment
 variable. Call `DatabaseManager::synchronize()` once connectivity is restored to
 push pending records to the MySQL server.
+The application now includes a small `NetworkMonitor` helper that listens for
+changes in network connectivity. When offline mode is enabled and the network
+becomes available again, `DatabaseManager` automatically triggers
+`synchronize()` so pending rows are uploaded without manual intervention.
 
 Example using environment variables:
 

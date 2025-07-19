@@ -6,6 +6,7 @@
 #include "UserManager.h"
 #include "login/LoginDialog.h"
 #include "login/MainWindow.h"
+#include "NetworkMonitor.h"
 
 int main(int argc, char *argv[])
 {
@@ -23,6 +24,13 @@ int main(int argc, char *argv[])
         QMessageBox::critical(nullptr, "Database Error", db.lastError());
         return -1;
     }
+
+    NetworkMonitor monitor;
+    QObject::connect(&monitor, &NetworkMonitor::connectivityChanged,
+                     [&db](bool online) {
+        if (online && db.isOffline())
+            db.synchronize();
+    });
 
     UserManager userManager;
     LoginDialog login(&userManager);
