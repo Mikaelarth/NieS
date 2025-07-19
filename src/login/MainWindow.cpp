@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "products/ProductWindow.h"
 #include "sales/POSWindow.h"
+#include "sales/SalesReportWindow.h"
 #include "ProductManager.h"
 #include "SalesManager.h"
 #include "UserManager.h"
@@ -24,6 +25,10 @@ MainWindow::MainWindow(UserManager *userManager, QWidget *parent)
     m_posAct->setObjectName("posAct");
     connect(m_posAct, &QAction::triggered, this, &MainWindow::openPOS);
 
+    m_reportAct = salesMenu->addAction(tr("Sales Report"));
+    m_reportAct->setObjectName("reportAct");
+    connect(m_reportAct, &QAction::triggered, this, &MainWindow::openReport);
+
     updatePermissions();
 }
 
@@ -45,6 +50,15 @@ void MainWindow::openPOS()
     m_posWindow->activateWindow();
 }
 
+void MainWindow::openReport()
+{
+    if (!m_reportWindow)
+        m_reportWindow = new SalesReportWindow(new SalesManager(this), this);
+    m_reportWindow->show();
+    m_reportWindow->raise();
+    m_reportWindow->activateWindow();
+}
+
 void MainWindow::updatePermissions()
 {
     const QString role = m_userManager ? m_userManager->currentRole() : QString();
@@ -52,5 +66,7 @@ void MainWindow::updatePermissions()
         m_manageAct->setEnabled(false);
     if (role != "seller" && role != "admin")
         m_posAct->setEnabled(false);
+    if (role != "admin")
+        m_reportAct->setEnabled(false);
 }
 
