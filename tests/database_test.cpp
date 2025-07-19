@@ -9,6 +9,11 @@
 #include "pos_window_test.h"
 #include "main_window_test.h"
 #include "sales_report_window_test.h"
+#include "return_manager_test.h"
+#include "invoice_printer_test.h"
+#include "payment_processor_test.h"
+#include "dashboard_window_test.h"
+#include "stock_prediction_test.h"
 #include <QTemporaryDir>
 #include <QProcess>
 #include <QRandomGenerator>
@@ -679,6 +684,16 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&salesReportTest, argc, argv);
     MainWindowTest mainWinTest;
     status |= QTest::qExec(&mainWinTest, argc, argv);
+    ReturnManagerTest returnTest;
+    status |= QTest::qExec(&returnTest, argc, argv);
+    InvoicePrinterTest invoiceTest;
+    status |= QTest::qExec(&invoiceTest, argc, argv);
+    PaymentProcessorTest paymentTest;
+    status |= QTest::qExec(&paymentTest, argc, argv);
+    DashboardWindowTest dashboardTest;
+    status |= QTest::qExec(&dashboardTest, argc, argv);
+    StockPredictionTest stockTest;
+    status |= QTest::qExec(&stockTest, argc, argv);
     return status;
 }
 
