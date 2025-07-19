@@ -142,6 +142,15 @@ subsequent runs skip migrations that were already executed:
 ./database/migrate.sh <your_database> <your_user>
 ```
 
+To populate your fresh database with a small demo dataset, run:
+
+```sh
+mysql -u <your_user> <your_database> < database/seed.sql
+```
+
+This creates an administrator account (`admin`/`adminpass`) and a couple of
+example products so you can explore the application right away.
+
 ## Troubleshooting
 
 If the application fails to connect to MySQL, check the following:
