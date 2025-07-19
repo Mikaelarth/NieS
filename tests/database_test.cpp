@@ -8,6 +8,7 @@
 #include "product_window_test.h"
 #include "pos_window_test.h"
 #include "main_window_test.h"
+#include "sales_report_window_test.h"
 #include <QTemporaryDir>
 #include <QProcess>
 #include <QRandomGenerator>
@@ -674,6 +675,8 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&productWindowTest, argc, argv);
     POSWindowTest posWindowTest;
     status |= QTest::qExec(&posWindowTest, argc, argv);
+    SalesReportWindowTest salesReportTest;
+    status |= QTest::qExec(&salesReportTest, argc, argv);
     MainWindowTest mainWinTest;
     status |= QTest::qExec(&mainWinTest, argc, argv);
     return status;
