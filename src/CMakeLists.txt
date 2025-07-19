@@ -14,6 +14,9 @@ add_executable(NieSApp
     ProductManager.cpp
     InventoryManager.cpp
     SalesManager.cpp
+    login/LoginDialog.cpp
+    login/MainWindow.cpp
 )
 
 target_link_libraries(NieSApp Qt5::Widgets Qt5::Sql)
+target_include_directories(NieSApp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
