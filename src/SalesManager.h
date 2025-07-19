@@ -14,6 +14,7 @@ public:
 
     bool recordSale(int productId, int quantity);
     QList<QVariantMap> salesReport();
+    QVariantMap financialReport();
 
     QString lastError() const;
 

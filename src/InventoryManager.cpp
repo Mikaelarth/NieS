@@ -18,6 +18,21 @@ bool InventoryManager::removeStock(int productId, int quantity)
     return updateStock(productId, -quantity);
 }
 
+int InventoryManager::currentStock(int productId) const
+{
+    QSqlQuery q;
+    q.prepare("SELECT quantity FROM inventory WHERE product_id = :pid");
+    q.bindValue(":pid", productId);
+    if (!q.exec() || !q.next())
+        return 0;
+    return q.value(0).toInt();
+}
+
+bool InventoryManager::isCritical(int productId, int threshold) const
+{
+    return currentStock(productId) < threshold;
+}
+
 bool InventoryManager::updateStock(int productId, int delta)
 {
     QSqlQuery query;

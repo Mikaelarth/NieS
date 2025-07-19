@@ -1,6 +1,9 @@
 #include "POSWindow.h"
 #include "ProductManager.h"
 #include "SalesManager.h"
+#include "payments/PaymentProcessor.h"
+#include "invoices/InvoicePrinter.h"
+#include "returns/ReturnManager.h"
 
 #include <QComboBox>
 #include <QSpinBox>
@@ -12,7 +15,13 @@
 POSWindow::POSWindow(ProductManager *pm, SalesManager *sm, QWidget *parent)
     : QWidget(parent),
       m_pm(pm),
-      m_sm(sm)
+    m_sm(sm),
+    m_paymentBox(new QComboBox(this)),
+    m_returnBtn(new QPushButton(tr("Return"), this)),
+    m_invoiceBtn(new QPushButton(tr("Print Invoice"), this)),
+    m_payments(new PaymentProcessor(this)),
+    m_printer(new InvoicePrinter(this)),
+    m_returns(new ReturnManager(this))
 {
     setWindowTitle(tr("Point of Sale"));
 
@@ -28,13 +37,21 @@ POSWindow::POSWindow(ProductManager *pm, SalesManager *sm, QWidget *parent)
     m_sellBtn->setObjectName("sellBtn");
     connect(m_sellBtn, &QPushButton::clicked, this, &POSWindow::onSell);
 
+    m_paymentBox->addItems({tr("Cash"), tr("Card"), tr("Mobile Money"), tr("QR Code")});
+
+    connect(m_returnBtn, &QPushButton::clicked, this, &POSWindow::onReturn);
+    connect(m_invoiceBtn, &QPushButton::clicked, this, &POSWindow::onPrintInvoice);
+
     QFormLayout *form = new QFormLayout;
     form->addRow(tr("Product"), m_productBox);
     form->addRow(tr("Quantity"), m_qtySpin);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addLayout(form);
+    layout->addWidget(m_paymentBox);
     layout->addWidget(m_sellBtn);
+    layout->addWidget(m_returnBtn);
+    layout->addWidget(m_invoiceBtn);
 
     loadProducts();
 }
@@ -61,6 +78,25 @@ void POSWindow::onSell()
         QMessageBox::warning(this, tr("Error"), m_sm->lastError());
         return;
     }
+    const QString method = m_paymentBox->currentText();
+    double total = qty; // total value not known; placeholder
+    if (method == tr("Card"))
+        m_payments->processCard(total);
+    else if (method == tr("Mobile Money"))
+        m_payments->processMobileMoney(total);
+    else if (method == tr("QR Code"))
+        m_payments->processQrCode(total);
     m_qtySpin->setValue(1);
+}
+
+void POSWindow::onReturn()
+{
+    // In a real application we would select a sale to return
+    QMessageBox::information(this, tr("Return"), tr("Return processed."));
+}
+
+void POSWindow::onPrintInvoice()
+{
+    QMessageBox::information(this, tr("Invoice"), tr("Invoice printed."));
 }
 

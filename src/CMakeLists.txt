@@ -15,8 +15,13 @@ add_executable(NieSApp
     products/ProductWindow.cpp
     InventoryManager.cpp
     SalesManager.cpp
+    returns/ReturnManager.cpp
+    invoices/InvoicePrinter.cpp
+    payments/PaymentProcessor.cpp
+    stock/StockPrediction.cpp
     sales/POSWindow.cpp
     sales/SalesReportWindow.cpp
+    dashboard/DashboardWindow.cpp
     login/LoginDialog.cpp
     login/MainWindow.cpp
 )

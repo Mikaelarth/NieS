@@ -19,6 +19,11 @@ set(TEST_SOURCES
     ${CMAKE_SOURCE_DIR}/src/sales/SalesReportWindow.cpp
     ${CMAKE_SOURCE_DIR}/src/InventoryManager.cpp
     ${CMAKE_SOURCE_DIR}/src/SalesManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/returns/ReturnManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/invoices/InvoicePrinter.cpp
+    ${CMAKE_SOURCE_DIR}/src/payments/PaymentProcessor.cpp
+    ${CMAKE_SOURCE_DIR}/src/stock/StockPrediction.cpp
+    ${CMAKE_SOURCE_DIR}/src/dashboard/DashboardWindow.cpp
     ${CMAKE_SOURCE_DIR}/src/login/LoginDialog.cpp
     ${CMAKE_SOURCE_DIR}/src/login/MainWindow.cpp
 )
