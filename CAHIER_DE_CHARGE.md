@@ -19,6 +19,12 @@ Concevoir une application de gestion moderne pour boutique ou restaurant. Elle d
 - Prédiction de stock et de ventes via analyse des données.
 - Sauvegarde et synchronisation de la base de données.
 - Mode hors ligne avec synchronisation ultérieure.
+- Programme de fidélité et cartes de membres.
+- Application mobile compagnon pour consultation et notifications.
+- API REST pour intégration e-commerce et systèmes tiers.
+- Gestion du personnel (planning et feuilles de paie).
+- Inventaire par codes-barres ou QR codes.
+- Interface multi-langues pour une portée internationale.
 
 ## Aspects techniques
 
