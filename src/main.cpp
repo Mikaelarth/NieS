@@ -1,5 +1,7 @@
 #include <QApplication>
 #include <QMessageBox>
+#include <QLocale>
+#include <QTranslator>
 #include "DatabaseManager.h"
 #include "UserManager.h"
 #include "login/LoginDialog.h"
@@ -8,6 +10,13 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
+    QTranslator translator;
+    const QString locale = QLocale::system().name();
+    const QString trPath = QCoreApplication::applicationDirPath() + "/translations";
+    if (translator.load("NieS_" + locale, trPath)) {
+        app.installTranslator(&translator);
+    }
 
     DatabaseManager db;
     if (!db.open()) {

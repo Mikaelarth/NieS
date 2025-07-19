@@ -34,6 +34,7 @@ Le projet en est à ses débuts. Les composants suivants sont disponibles :
 * Tableaux de bord avec indicateurs clés (ventes, niveaux de stock).
 * Prédiction de stock et alertes de seuil critique.
 * Support multi‑utilisateurs connecté à une base de données partagée.
+* Interface multilingue basée sur les fichiers de traduction Qt.
 
 ## Planned Features
 
@@ -103,6 +104,13 @@ NIES_DB_OFFLINE_PATH=mydata.db ./NieSApp
 ```
 
 This runs the application entirely with the local SQLite file `mydata.db`.
+
+### Multilingual Support
+
+The application loads translations from the `translations` directory next to the
+executable. Use `lupdate` to update the `.ts` files and `cmake` will compile
+them to `.qm` at build time. At runtime, `NieSApp` selects the translation that
+matches your system locale.
 
 ## Running Tests
 
