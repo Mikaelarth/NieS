@@ -5,6 +5,7 @@
 #include <QProcessEnvironment>
 #include <QCoreApplication>
 #include <QStringList>
+#include <QDateTime>
 
 DatabaseManager::DatabaseManager(const QString &configPath, QObject *parent)
     : QObject(parent),
@@ -139,26 +140,163 @@ bool DatabaseManager::synchronize()
             check.addBindValue(local.value("id"));
             if (!check.exec() || !check.next())
                 continue;
-            if (check.value(0).toInt() > 0)
-                continue;
+            bool exists = check.value(0).toInt() > 0;
 
-            QStringList cols, placeholders;
-            for (int i = 0; i < rec.count(); ++i) {
-                cols << rec.fieldName(i);
-                placeholders << "?";
+            // Determine timestamp column if any
+            QString tsCol;
+            if (rec.indexOf("updated_at") != -1)
+                tsCol = "updated_at";
+            else if (rec.indexOf("last_update") != -1)
+                tsCol = "last_update";
+            else if (rec.indexOf("created_at") != -1)
+                tsCol = "created_at";
+
+            if (exists) {
+                if (!tsCol.isEmpty()) {
+                    QSqlQuery remoteRow(remote);
+                    remoteRow.prepare(QString("SELECT * FROM %1 WHERE id=?").arg(table));
+                    remoteRow.addBindValue(local.value("id"));
+                    if (remoteRow.exec() && remoteRow.next()) {
+                        QDateTime localTs = QDateTime::fromString(local.value(tsCol).toString(), Qt::ISODate);
+                        if (!localTs.isValid())
+                            localTs = QDateTime::fromString(local.value(tsCol).toString(), "yyyy-MM-dd HH:mm:ss");
+                        QDateTime remoteTs = QDateTime::fromString(remoteRow.value(tsCol).toString(), Qt::ISODate);
+                        if (!remoteTs.isValid())
+                            remoteTs = QDateTime::fromString(remoteRow.value(tsCol).toString(), "yyyy-MM-dd HH:mm:ss");
+                        if (localTs <= remoteTs)
+                            continue; // remote has newer or equal data
+                    } else {
+                        continue;
+                    }
+                } else {
+                    continue; // record exists and no timestamp to compare
+                }
+
+                // Update remote with local newer row
+                QStringList sets;
+                for (int i = 0; i < rec.count(); ++i) {
+                    const QString fname = rec.fieldName(i);
+                    if (fname == "id")
+                        continue;
+                    sets << QString("%1=?").arg(fname);
+                }
+                QSqlQuery upd(remote);
+                upd.prepare(QString("UPDATE %1 SET %2 WHERE id=?")
+                            .arg(table)
+                            .arg(sets.join(',')));
+                for (int i = 0; i < rec.count(); ++i) {
+                    if (rec.fieldName(i) == "id")
+                        continue;
+                    upd.addBindValue(local.value(i));
+                }
+                upd.addBindValue(local.value("id"));
+                if (!upd.exec()) {
+                    m_lastError = upd.lastError().text();
+                    remote.close();
+                    QSqlDatabase::removeDatabase("sync");
+                    return false;
+                }
+            } else {
+                QStringList cols, placeholders;
+                for (int i = 0; i < rec.count(); ++i) {
+                    cols << rec.fieldName(i);
+                    placeholders << "?";
+                }
+                QSqlQuery ins(remote);
+                ins.prepare(QString("INSERT INTO %1(%2) VALUES(%3)")
+                            .arg(table)
+                            .arg(cols.join(','))
+                            .arg(placeholders.join(',')));
+                for (int i = 0; i < rec.count(); ++i)
+                    ins.addBindValue(local.value(i));
+                if (!ins.exec()) {
+                    m_lastError = ins.lastError().text();
+                    remote.close();
+                    QSqlDatabase::removeDatabase("sync");
+                    return false;
+                }
             }
-            QSqlQuery ins(remote);
-            ins.prepare(QString("INSERT INTO %1(%2) VALUES(%3)")
-                        .arg(table)
-                        .arg(cols.join(','))
-                        .arg(placeholders.join(',')));
-            for (int i = 0; i < rec.count(); ++i)
-                ins.addBindValue(local.value(i));
-            if (!ins.exec()) {
-                m_lastError = ins.lastError().text();
-                remote.close();
-                QSqlDatabase::removeDatabase("sync");
-                return false;
+        }
+    }
+
+    // Download remote changes
+    for (const QString &table : tables) {
+        QSqlQuery remoteSel(remote);
+        if (!remoteSel.exec(QString("SELECT * FROM %1").arg(table)))
+            continue;
+        QSqlRecord rec = remoteSel.record();
+        while (remoteSel.next()) {
+            QVariant idVal = remoteSel.value("id");
+            QSqlQuery checkLocal(m_db);
+            checkLocal.prepare(QString("SELECT * FROM %1 WHERE id=?").arg(table));
+            checkLocal.addBindValue(idVal);
+            bool exists = checkLocal.exec() && checkLocal.next();
+
+            QString tsCol;
+            if (rec.indexOf("updated_at") != -1)
+                tsCol = "updated_at";
+            else if (rec.indexOf("last_update") != -1)
+                tsCol = "last_update";
+            else if (rec.indexOf("created_at") != -1)
+                tsCol = "created_at";
+
+            bool applyUpdate = true;
+            if (exists && !tsCol.isEmpty()) {
+                QDateTime localTs = QDateTime::fromString(checkLocal.value(tsCol).toString(), Qt::ISODate);
+                if (!localTs.isValid())
+                    localTs = QDateTime::fromString(checkLocal.value(tsCol).toString(), "yyyy-MM-dd HH:mm:ss");
+                QDateTime remoteTs = QDateTime::fromString(remoteSel.value(tsCol).toString(), Qt::ISODate);
+                if (!remoteTs.isValid())
+                    remoteTs = QDateTime::fromString(remoteSel.value(tsCol).toString(), "yyyy-MM-dd HH:mm:ss");
+                if (localTs >= remoteTs)
+                    applyUpdate = false;
+            } else if (exists && tsCol.isEmpty()) {
+                applyUpdate = false; // no timestamp to compare, keep local
+            }
+
+            if (!exists) {
+                QStringList cols, placeholders;
+                for (int i = 0; i < rec.count(); ++i) {
+                    cols << rec.fieldName(i);
+                    placeholders << "?";
+                }
+                QSqlQuery ins(m_db);
+                ins.prepare(QString("INSERT INTO %1(%2) VALUES(%3)")
+                            .arg(table)
+                            .arg(cols.join(','))
+                            .arg(placeholders.join(',')));
+                for (int i = 0; i < rec.count(); ++i)
+                    ins.addBindValue(remoteSel.value(i));
+                if (!ins.exec()) {
+                    m_lastError = ins.lastError().text();
+                    remote.close();
+                    QSqlDatabase::removeDatabase("sync");
+                    return false;
+                }
+            } else if (applyUpdate) {
+                QStringList sets;
+                for (int i = 0; i < rec.count(); ++i) {
+                    const QString fname = rec.fieldName(i);
+                    if (fname == "id")
+                        continue;
+                    sets << QString("%1=?").arg(fname);
+                }
+                QSqlQuery upd(m_db);
+                upd.prepare(QString("UPDATE %1 SET %2 WHERE id=?")
+                            .arg(table)
+                            .arg(sets.join(',')));
+                for (int i = 0; i < rec.count(); ++i) {
+                    if (rec.fieldName(i) == "id")
+                        continue;
+                    upd.addBindValue(remoteSel.value(i));
+                }
+                upd.addBindValue(idVal);
+                if (!upd.exec()) {
+                    m_lastError = upd.lastError().text();
+                    remote.close();
+                    QSqlDatabase::removeDatabase("sync");
+                    return false;
+                }
             }
         }
     }
