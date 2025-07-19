@@ -11,6 +11,7 @@
 #include <QtSql/QSqlRecord>
 #include <QFile>
 #include <QTextStream>
+#include <QCryptographicHash>
 
 class DatabaseManagerTest : public QObject
 {
@@ -97,6 +98,7 @@ class UserManagerTest : public QObject
     Q_OBJECT
 private slots:
     void createUser();
+    void authenticateUser();
 };
 
 void UserManagerTest::createUser()
@@ -112,16 +114,47 @@ void UserManagerTest::createUser()
                        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                        "username TEXT UNIQUE,"
                        "password_hash TEXT,"
+                       "password_salt TEXT,"
                        "role TEXT,"
                        "created_at TEXT)"));
 
     UserManager um;
-    QVERIFY(um.createUser("alice", "hash", "admin"));
+    QVERIFY(um.createUser("alice", "secret", "admin"));
 
-    QVERIFY(query.exec("SELECT username, role FROM users WHERE username='alice'"));
+    QVERIFY(query.exec("SELECT username, password_hash, password_salt, role FROM users WHERE username='alice'"));
     QVERIFY(query.next());
     QCOMPARE(query.value(0).toString(), QString("alice"));
-    QCOMPARE(query.value(1).toString(), QString("admin"));
+    QString salt = query.value(2).toString();
+    QByteArray expected = QCryptographicHash::hash((salt + "secret").toUtf8(), QCryptographicHash::Sha256).toHex();
+    QCOMPARE(query.value(1).toString(), QString(expected));
+    QCOMPARE(query.value(3).toString(), QString("admin"));
+
+    db.close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+
+void UserManagerTest::authenticateUser()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(":memory:");
+    QVERIFY(db.open());
+
+    QSqlQuery query;
+    QVERIFY(query.exec("CREATE TABLE users("
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "username TEXT UNIQUE,"
+                       "password_hash TEXT,"
+                       "password_salt TEXT,"
+                       "role TEXT,"
+                       "created_at TEXT)"));
+
+    UserManager um;
+    QVERIFY(um.createUser("bob", "mypwd", "seller"));
+
+    QVERIFY(um.authenticate("bob", "mypwd"));
+    QVERIFY(!um.authenticate("bob", "wrong"));
 
     db.close();
     QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
