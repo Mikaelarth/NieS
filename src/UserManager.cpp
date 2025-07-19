@@ -71,7 +71,12 @@ bool UserManager::authenticate(const QString &username, const QString &password)
     const QString storedHash = query.value(0).toString();
     const QString salt = query.value(1).toString();
     const QByteArray computed = QCryptographicHash::hash((salt + password).toUtf8(), QCryptographicHash::Sha256).toHex();
-    return storedHash == QString(computed);
+
+    if (storedHash != QString(computed)) {
+        m_lastError = QStringLiteral("Incorrect password");
+        return false;
+    }
+    return true;
 }
 
 QString UserManager::lastError() const

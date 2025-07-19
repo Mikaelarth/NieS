@@ -157,6 +157,7 @@ void UserManagerTest::authenticateUser()
 
     QVERIFY(um.authenticate("bob", "mypwd"));
     QVERIFY(!um.authenticate("bob", "wrong"));
+    QCOMPARE(um.lastError(), QString("Incorrect password"));
 
     db.close();
     QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
