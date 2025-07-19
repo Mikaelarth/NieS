@@ -4,12 +4,14 @@
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSettings>
+#include <QString>
 
 class DatabaseManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit DatabaseManager(QObject *parent = nullptr);
+    explicit DatabaseManager(const QString &configPath = QString(),
+                             QObject *parent = nullptr);
 
     bool open();
     void close();
