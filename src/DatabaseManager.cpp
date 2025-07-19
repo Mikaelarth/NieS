@@ -16,7 +16,7 @@ DatabaseManager::DatabaseManager(const QString &configPath, QObject *parent)
           }
           return path;
       }(), QSettings::IniFormat),
-      m_db(QSqlDatabase::addDatabase("QPSQL"))
+      m_db(QSqlDatabase::addDatabase("QMYSQL"))
 {
 }
 
@@ -38,7 +38,7 @@ bool DatabaseManager::open()
             : m_settings.value("database/password").toString();
     const int port = env.contains("NIES_DB_PORT")
             ? env.value("NIES_DB_PORT").toInt()
-            : m_settings.value("database/port", 5432).toInt();
+            : m_settings.value("database/port", 3306).toInt();
 
     m_db.setHostName(host);
     m_db.setDatabaseName(dbName);

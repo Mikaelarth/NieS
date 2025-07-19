@@ -1,4 +1,4 @@
-\i users.sql
-\i products.sql
-\i inventory.sql
-\i sales.sql
+source users.sql;
+source products.sql;
+source inventory.sql;
+source sales.sql;

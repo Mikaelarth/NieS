@@ -11,21 +11,21 @@ int main(int argc, char *argv[])
 
     QSettings settings("config.ini", QSettings::IniFormat);
 
-    QSqlDatabase db = QSqlDatabase::addDatabase("QPSQL");
+    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
     db.setHostName(settings.value("database/host", "localhost").toString());
     db.setDatabaseName(settings.value("database/name").toString());
     db.setUserName(settings.value("database/user").toString());
     db.setPassword(settings.value("database/password").toString());
-    db.setPort(settings.value("database/port", 5432).toInt());
+    db.setPort(settings.value("database/port", 3306).toInt());
 
     if (!db.open()) {
         qCritical() << "Connection failed:" << db.lastError().text();
         return 1;
     }
 
-    QSqlQuery query("SELECT version();");
+    QSqlQuery query("SELECT VERSION();");
     if (query.next()) {
-        qInfo() << "PostgreSQL version:" << query.value(0).toString();
+        qInfo() << "MySQL version:" << query.value(0).toString();
     } else {
         qCritical() << "Query error:" << query.lastError().text();
     }
