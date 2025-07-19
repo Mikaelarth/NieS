@@ -12,6 +12,7 @@ add_executable(NieSApp
     DatabaseManager.cpp
     UserManager.cpp
     ProductManager.cpp
+    products/ProductWindow.cpp
     InventoryManager.cpp
     SalesManager.cpp
     login/LoginDialog.cpp
