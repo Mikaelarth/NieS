@@ -99,6 +99,8 @@ class UserManagerTest : public QObject
 private slots:
     void createUser();
     void authenticateUser();
+    void deleteUser();
+    void deleteUserNonexistent();
 };
 
 void UserManagerTest::createUser()
@@ -160,11 +162,68 @@ void UserManagerTest::authenticateUser()
     QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
 }
 
+void UserManagerTest::deleteUser()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(":memory:");
+    QVERIFY(db.open());
+
+    QSqlQuery query;
+    QVERIFY(query.exec("CREATE TABLE users("
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "username TEXT UNIQUE,"
+                       "password_hash TEXT,"
+                       "password_salt TEXT,"
+                       "role TEXT,"
+                       "created_at TEXT)"));
+
+    UserManager um;
+    QVERIFY(um.createUser("charlie", "pw", "user"));
+    QVERIFY(um.deleteUser("charlie"));
+
+    QVERIFY(query.exec("SELECT COUNT(*) FROM users"));
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toInt(), 0);
+
+    db.close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+
+void UserManagerTest::deleteUserNonexistent()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(":memory:");
+    QVERIFY(db.open());
+
+    QSqlQuery query;
+    QVERIFY(query.exec("CREATE TABLE users("
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "username TEXT UNIQUE,"
+                       "password_hash TEXT,"
+                       "password_salt TEXT,"
+                       "role TEXT,"
+                       "created_at TEXT)"));
+
+    UserManager um;
+    QVERIFY(!um.deleteUser("ghost"));
+
+    db.close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+
 class ProductManagerTest : public QObject
 {
     Q_OBJECT
 private slots:
     void addProduct();
+    void updateProduct();
+    void deleteProduct();
+    void updateProductNonexistent();
+    void deleteProductNonexistent();
 };
 
 void ProductManagerTest::addProduct()
@@ -192,6 +251,116 @@ void ProductManagerTest::addProduct()
     QCOMPARE(query.value(0).toString(), QString("Widget"));
     QCOMPARE(query.value(1).toDouble(), 9.99);
     QCOMPARE(query.value(2).toDouble(), 1.0);
+
+    db.close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+
+void ProductManagerTest::updateProduct()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(":memory:");
+    QVERIFY(db.open());
+
+    QSqlQuery query;
+    QVERIFY(query.exec("CREATE TABLE products("
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "name TEXT,"
+                       "price REAL,"
+                       "discount REAL DEFAULT 0,"
+                       "created_at TEXT,"
+                       "updated_at TEXT)"));
+    QVERIFY(query.exec("INSERT INTO products(name, price, discount) VALUES('Old', 1.0, 0.0)"));
+    int productId = query.lastInsertId().toInt();
+
+    ProductManager pm;
+    QVERIFY(pm.updateProduct(productId, "New", 2.5, 0.2));
+
+    QVERIFY(query.exec("SELECT name, price, discount FROM products WHERE id=1"));
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toString(), QString("New"));
+    QCOMPARE(query.value(1).toDouble(), 2.5);
+    QCOMPARE(query.value(2).toDouble(), 0.2);
+
+    db.close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+
+void ProductManagerTest::deleteProduct()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(":memory:");
+    QVERIFY(db.open());
+
+    QSqlQuery query;
+    QVERIFY(query.exec("CREATE TABLE products("
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "name TEXT,"
+                       "price REAL,"
+                       "discount REAL DEFAULT 0,"
+                       "created_at TEXT,"
+                       "updated_at TEXT)"));
+    QVERIFY(query.exec("INSERT INTO products(name, price, discount) VALUES('ToDelete', 5.0, 0.0)"));
+    int productId = query.lastInsertId().toInt();
+
+    ProductManager pm;
+    QVERIFY(pm.deleteProduct(productId));
+
+    QVERIFY(query.exec("SELECT COUNT(*) FROM products"));
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toInt(), 0);
+
+    db.close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+
+void ProductManagerTest::updateProductNonexistent()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(":memory:");
+    QVERIFY(db.open());
+
+    QSqlQuery query;
+    QVERIFY(query.exec("CREATE TABLE products("
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "name TEXT,"
+                       "price REAL,"
+                       "discount REAL DEFAULT 0,"
+                       "created_at TEXT,"
+                       "updated_at TEXT)"));
+
+    ProductManager pm;
+    QVERIFY(!pm.updateProduct(42, "None", 1.0, 0.0));
+
+    db.close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+
+void ProductManagerTest::deleteProductNonexistent()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(":memory:");
+    QVERIFY(db.open());
+
+    QSqlQuery query;
+    QVERIFY(query.exec("CREATE TABLE products("
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                       "name TEXT,"
+                       "price REAL,"
+                       "discount REAL DEFAULT 0,"
+                       "created_at TEXT,"
+                       "updated_at TEXT)"));
+
+    ProductManager pm;
+    QVERIFY(!pm.deleteProduct(99));
 
     db.close();
     QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);

@@ -25,7 +25,7 @@ bool ProductManager::addProduct(const QString &name, double price, double discou
 bool ProductManager::updateProduct(int id, const QString &name, double price, double discount)
 {
     QSqlQuery query;
-    query.prepare("UPDATE products SET name = :name, price = :price, discount = :discount, updated_at = NOW() WHERE id = :id");
+    query.prepare("UPDATE products SET name = :name, price = :price, discount = :discount, updated_at = CURRENT_TIMESTAMP WHERE id = :id");
     query.bindValue(":name", name);
     query.bindValue(":price", price);
     query.bindValue(":discount", discount);
