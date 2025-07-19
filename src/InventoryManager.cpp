@@ -80,6 +80,8 @@ bool InventoryManager::updateStock(int productId, int delta)
         m_lastError = modify.lastError().text();
         return false;
     }
+
+    emit stockChanged(productId, newQty);
     return true;
 }
 

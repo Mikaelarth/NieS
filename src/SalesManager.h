@@ -20,6 +20,9 @@ public:
 
     QString lastError() const;
 
+signals:
+    void saleRecorded(int productId, int quantity);
+
 private:
     QString m_lastError;
     InventoryManager m_inventory;

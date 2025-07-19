@@ -19,6 +19,9 @@ public:
 
     QString lastError() const;
 
+signals:
+    void stockChanged(int productId, int newQuantity);
+
 private:
     bool updateStock(int productId, int delta);
     QString m_lastError;

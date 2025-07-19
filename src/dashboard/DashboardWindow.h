@@ -2,6 +2,10 @@
 #define DASHBOARDWINDOW_H
 
 #include <QWidget>
+#include <QTimer>
+
+class QListWidget;
+#include "stock/StockPrediction.h"
 
 class SalesManager;
 class InventoryManager;
@@ -16,10 +20,14 @@ public:
 
 public slots:
     void refresh();
+    void refreshPredictions();
 
 private:
     SalesManager *m_sm;
     InventoryManager *m_im;
+    StockPrediction m_prediction;
+    QTimer m_timer;
+    QListWidget *m_predictionList = nullptr;
     QLabel *m_revenueLabel = nullptr;
     QLabel *m_unitsLabel = nullptr;
     QLabel *m_stockLabel = nullptr;
