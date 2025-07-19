@@ -41,18 +41,19 @@ bool InventoryManager::updateStock(int productId, int delta)
         return false;
     }
 
+    QSqlQuery modify;
     if (exists) {
-        query.prepare("UPDATE inventory SET quantity = :qty, last_update = NOW() WHERE product_id = :product_id");
-        query.bindValue(":qty", newQty);
-        query.bindValue(":product_id", productId);
+        modify.prepare("UPDATE inventory SET quantity = :qty, last_update = CURRENT_TIMESTAMP WHERE product_id = :product_id");
+        modify.bindValue(":qty", newQty);
+        modify.bindValue(":product_id", productId);
     } else {
-        query.prepare("INSERT INTO inventory(product_id, quantity) VALUES(:product_id, :qty)");
-        query.bindValue(":product_id", productId);
-        query.bindValue(":qty", newQty);
+        modify.prepare("INSERT INTO inventory(product_id, quantity) VALUES(:product_id, :qty)");
+        modify.bindValue(":product_id", productId);
+        modify.bindValue(":qty", newQty);
     }
 
-    if (!query.exec()) {
-        m_lastError = query.lastError().text();
+    if (!modify.exec()) {
+        m_lastError = modify.lastError().text();
         return false;
     }
     return true;
