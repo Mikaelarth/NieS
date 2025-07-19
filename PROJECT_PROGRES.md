@@ -21,7 +21,7 @@
 - [ ] API REST pour intégration e-commerce
 - [ ] Application mobile compagnon
 - [ ] Programme de fidélité clients
-- [ ] Support multilingue
+- [x] Support multilingue
 
 ## Notes et obstacles
 Ajoutez ici toute décision importante ou difficulté rencontrée afin de garder une trace de l\'evolution du projet.
