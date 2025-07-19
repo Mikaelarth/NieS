@@ -57,7 +57,7 @@ bool UserManager::updateUserRole(const QString &username, const QString &newRole
 bool UserManager::authenticate(const QString &username, const QString &password)
 {
     QSqlQuery query;
-    query.prepare("SELECT password_hash, password_salt FROM users WHERE username = :username");
+    query.prepare("SELECT password_hash, password_salt, role FROM users WHERE username = :username");
     query.bindValue(":username", username);
     if (!query.exec()) {
         m_lastError = query.lastError().text();
@@ -70,16 +70,36 @@ bool UserManager::authenticate(const QString &username, const QString &password)
 
     const QString storedHash = query.value(0).toString();
     const QString salt = query.value(1).toString();
+    const QString role = query.value(2).toString();
     const QByteArray computed = QCryptographicHash::hash((salt + password).toUtf8(), QCryptographicHash::Sha256).toHex();
 
     if (storedHash != QString(computed)) {
         m_lastError = QStringLiteral("Incorrect password");
         return false;
     }
+
+    m_currentUser = username;
+    m_currentRole = role;
     return true;
 }
 
 QString UserManager::lastError() const
 {
     return m_lastError;
+}
+
+QString UserManager::currentUser() const
+{
+    return m_currentUser;
+}
+
+QString UserManager::currentRole() const
+{
+    return m_currentRole;
+}
+
+void UserManager::logout()
+{
+    m_currentUser.clear();
+    m_currentRole.clear();
 }
