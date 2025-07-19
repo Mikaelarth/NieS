@@ -23,6 +23,7 @@ ProductWindow::ProductWindow(ProductManager *pm, QWidget *parent)
     m_table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_table->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    connect(m_table, &QTableWidget::itemSelectionChanged, this, &ProductWindow::onRowSelected);
 
     m_nameEdit = new QLineEdit(this);
     m_nameEdit->setObjectName("nameEdit");
@@ -113,5 +114,15 @@ void ProductWindow::onDelete()
         return;
     }
     loadProducts();
+}
+
+void ProductWindow::onRowSelected()
+{
+    int row = m_table->currentRow();
+    if (row < 0)
+        return;
+    m_nameEdit->setText(m_table->item(row, 1)->text());
+    m_priceEdit->setValue(m_table->item(row, 2)->text().toDouble());
+    m_discountEdit->setValue(m_table->item(row, 3)->text().toDouble());
 }
 

@@ -22,6 +22,7 @@ private slots:
     void onAdd();
     void onEdit();
     void onDelete();
+    void onRowSelected();
 
 private:
     ProductManager *m_pm;

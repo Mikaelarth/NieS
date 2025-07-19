@@ -48,6 +48,12 @@ void ProductWindowTest::addProductUI()
     QCOMPARE(table->rowCount(), 1);
     QCOMPARE(table->item(0,1)->text(), QString("TestItem"));
 
+    // Selecting the row should fill the edit fields
+    table->selectRow(0);
+    QCOMPARE(nameEdit->text(), QString("TestItem"));
+    QCOMPARE(priceEdit->value(), 5.5);
+    QCOMPARE(discountEdit->value(), 0.5);
+
     db.close();
     QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
 }
