@@ -3,22 +3,28 @@
 #include "sales/POSWindow.h"
 #include "ProductManager.h"
 #include "SalesManager.h"
+#include "UserManager.h"
 #include <QMenuBar>
 #include <QMenu>
 #include <QAction>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+MainWindow::MainWindow(UserManager *userManager, QWidget *parent)
+    : QMainWindow(parent),
+      m_userManager(userManager)
 {
     setWindowTitle(tr("NieS"));
 
     QMenu *prodMenu = menuBar()->addMenu(tr("Products"));
-    QAction *manageAct = prodMenu->addAction(tr("Manage Products"));
-    connect(manageAct, &QAction::triggered, this, &MainWindow::openProducts);
+    m_manageAct = prodMenu->addAction(tr("Manage Products"));
+    m_manageAct->setObjectName("manageAct");
+    connect(m_manageAct, &QAction::triggered, this, &MainWindow::openProducts);
 
     QMenu *salesMenu = menuBar()->addMenu(tr("Sales"));
-    QAction *posAct = salesMenu->addAction(tr("Point of Sale"));
-    connect(posAct, &QAction::triggered, this, &MainWindow::openPOS);
+    m_posAct = salesMenu->addAction(tr("Point of Sale"));
+    m_posAct->setObjectName("posAct");
+    connect(m_posAct, &QAction::triggered, this, &MainWindow::openPOS);
+
+    updatePermissions();
 }
 
 void MainWindow::openProducts()
@@ -37,5 +43,14 @@ void MainWindow::openPOS()
     m_posWindow->show();
     m_posWindow->raise();
     m_posWindow->activateWindow();
+}
+
+void MainWindow::updatePermissions()
+{
+    const QString role = m_userManager ? m_userManager->currentRole() : QString();
+    if (role != "admin")
+        m_manageAct->setEnabled(false);
+    if (role != "seller" && role != "admin")
+        m_posAct->setEnabled(false);
 }
 

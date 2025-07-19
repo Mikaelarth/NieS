@@ -15,10 +15,16 @@ public:
     bool updateUserRole(const QString &username, const QString &newRole);
     bool authenticate(const QString &username, const QString &password);
 
+    QString currentUser() const;
+    QString currentRole() const;
+    void logout();
+
     QString lastError() const;
 
 private:
     QString m_lastError;
+    QString m_currentUser;
+    QString m_currentRole;
 };
 
 #endif // USERMANAGER_H
