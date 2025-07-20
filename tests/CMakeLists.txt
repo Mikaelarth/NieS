@@ -2,7 +2,13 @@ cmake_minimum_required(VERSION 3.5)
 
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5 COMPONENTS Test Sql Widgets Network Charts REQUIRED)
+find_package(Qt6 COMPONENTS Test Sql Widgets Network NetworkInformation Charts)
+if(Qt6_FOUND)
+    set(QT_PACKAGE Qt6)
+else()
+    find_package(Qt5 COMPONENTS Test Sql Widgets Network Charts REQUIRED)
+    set(QT_PACKAGE Qt5)
+endif()
 
 set(TEST_SOURCES
     database_test.cpp
@@ -55,6 +61,9 @@ add_executable(nies_tests ${TEST_SOURCES})
 
 target_include_directories(nies_tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
-target_link_libraries(nies_tests Qt5::Test Qt5::Sql Qt5::Widgets Qt5::Network Qt5::Charts)
+target_link_libraries(nies_tests ${QT_PACKAGE}::Test ${QT_PACKAGE}::Sql ${QT_PACKAGE}::Widgets ${QT_PACKAGE}::Network ${QT_PACKAGE}::Charts)
+if(Qt6_FOUND)
+    target_link_libraries(nies_tests Qt6::NetworkInformation)
+endif()
 
 add_test(NAME NieSTests COMMAND nies_tests)

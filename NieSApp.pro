@@ -1,4 +1,5 @@
 QT += widgets sql network charts
+qtHaveModule(networkinformation): QT += networkinformation
 CONFIG += c++11 console
 TEMPLATE = app
 TARGET = NieSApp
