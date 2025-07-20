@@ -15,7 +15,8 @@
 ### Nouvelles tâches
 - [ ] Améliorer l\'UI d\'authentification
 - [ ] Intégrer les paiements numériques *(PaymentProcessor ne fait qu\'une simulation – intégration d\'une passerelle réelle nécessaire)*
-- [ ] Générer un tableau de bord complet *(DashboardWindow n\'affiche encore qu\'un texte temporaire)*
+- [x] Générer un tableau de bord complet
+- [ ] Ajouter une option `--port` et la variable `NIES_REST_PORT` pour le serveur REST
 - [ ] Prédiction de stock et de ventes *(module `StockPrediction` basique, pas encore relié à l\'interface)*
 - [ ] Système de sauvegarde et synchronisation
 - [ ] API REST pour intégration e-commerce

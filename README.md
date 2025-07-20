@@ -81,13 +81,14 @@ make
 ### REST API server
 
 An optional HTTP server exposes product and sales data as a small REST API.
-Build the `NieSApi` target and launch it (default port `8080`):
+Build the `NieSApi` target and launch it. The listening port can be
+specified with `--port` or the `NIES_REST_PORT` variable (default `8080`):
 
 ```bash
 mkdir build && cd build
 cmake ..
 make NieSApi
-./NieSApi
+./NieSApi --port 8080
 ```
 
 Available endpoints:
@@ -113,6 +114,7 @@ connection settings via environment variables:
 - `NIES_DB_DRIVER` – Qt SQL driver (e.g. `QMYSQL`, `QSQLITE`)
 - `NIES_DB_OFFLINE_PATH` – path to the offline SQLite file
 - `NIES_DB_BACKUP_PATH` – location of the JSON backup file
+- `NIES_REST_PORT` – REST server port when running `NieSApi`
 - `NIES_LANG` – override the UI language (e.g. `fr_FR`)
 - `NIES_DASH_INTERVAL` – dashboard refresh interval in milliseconds
 
