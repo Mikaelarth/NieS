@@ -52,8 +52,12 @@ bool PaymentProcessor::sendRequest(const QString &method, double amount)
     }
 
     if (m_endpoint.isEmpty()) {
-        qDebug() << "Simulated" << method << "payment:" << amount;
-        return true;
+        m_lastError = tr("Payment endpoint not configured");
+        return false;
+    }
+    if (m_apiKey.isEmpty()) {
+        m_lastError = tr("Missing API key");
+        return false;
     }
 
     QNetworkRequest req(m_endpoint);
@@ -71,7 +75,23 @@ bool PaymentProcessor::sendRequest(const QString &method, double amount)
         return false;
     }
 
+    QByteArray data = reply->readAll();
     reply->deleteLater();
+
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(data, &err);
+    if (err.error != QJsonParseError::NoError || !doc.isObject()) {
+        m_lastError = tr("Invalid response");
+        return false;
+    }
+
+    QJsonObject resp = doc.object();
+    bool success = resp.value("success").toBool(true);
+    if (!success) {
+        m_lastError = resp.value("error").toString(tr("Payment failed"));
+        return false;
+    }
+
     return true;
 }
 

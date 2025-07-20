@@ -8,9 +8,9 @@
 
 class DatabaseManager;
 
-// Basic payment handler used by the POS window. The current implementation
-// only simulates successful transactions. Integrate with a real payment
-// gateway to accept actual payments.
+// Basic payment handler used by the POS window. It now performs real
+// HTTP requests to the configured payment gateway. If no endpoint is set
+// the transaction fails with an error.
 class PaymentProcessor : public QObject
 {
     Q_OBJECT
