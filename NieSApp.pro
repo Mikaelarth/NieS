@@ -12,7 +12,7 @@ SOURCES += \
     src/SalesManager.cpp \
     src/UserSession.cpp \
     src/login/LoginDialog.cpp \
-    src/login/MainWindow.cppn\
+    src/login/MainWindow.cpp \
     src/NetworkMonitor.cpp
 
 HEADERS += \
