@@ -9,6 +9,7 @@ class LoginDialogTest : public QObject
 private slots:
     void invalidCredentials();
     void validCredentials();
+    void togglePasswordVisibility();
 };
 
 #endif // LOGIN_TEST_H
