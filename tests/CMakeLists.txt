@@ -21,6 +21,7 @@ set(TEST_SOURCES
     loyalty_manager_test.cpp
     employee_manager_test.cpp
     employee_window_test.cpp
+    inventory_window_test.cpp
     barcode_scanner_test.cpp
     config_option_test.cpp
     ${CMAKE_SOURCE_DIR}/src/DatabaseManager.cpp
@@ -28,6 +29,7 @@ set(TEST_SOURCES
     ${CMAKE_SOURCE_DIR}/src/ProductManager.cpp
     ${CMAKE_SOURCE_DIR}/src/products/ProductWindow.cpp
     ${CMAKE_SOURCE_DIR}/src/sales/POSWindow.cpp
+    ${CMAKE_SOURCE_DIR}/src/inventory/InventoryWindow.cpp
     ${CMAKE_SOURCE_DIR}/src/sales/SalesReportWindow.cpp
     ${CMAKE_SOURCE_DIR}/src/InventoryManager.cpp
     ${CMAKE_SOURCE_DIR}/src/SalesManager.cpp

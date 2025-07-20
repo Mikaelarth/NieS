@@ -18,6 +18,7 @@
 #include "config_option_test.h"
 #include "employee_manager_test.h"
 #include "employee_window_test.h"
+#include "inventory_window_test.h"
 #include "barcode_scanner_test.h"
 #include <QTemporaryDir>
 #include <QProcess>
@@ -294,6 +295,7 @@ private slots:
     void deleteProduct();
     void updateProductNonexistent();
     void deleteProductNonexistent();
+    void findByBarcode();
 };
 
 void ProductManagerTest::addProduct()
@@ -431,6 +433,33 @@ void ProductManagerTest::deleteProductNonexistent()
 
     ProductManager pm;
     QVERIFY(!pm.deleteProduct(99));
+
+    db.close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+
+void ProductManagerTest::findByBarcode()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(":memory:");
+    QVERIFY(db.open());
+
+    QSqlQuery query;
+    QVERIFY(query.exec("CREATE TABLE products("\
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"\
+                       "name TEXT,"\
+                       "price REAL,"\
+                       "discount REAL DEFAULT 0,"\
+                       "barcode TEXT)"));
+    QVERIFY(query.exec("INSERT INTO products(name, price, discount, barcode) VALUES('Item',2.0,0,'xyz')"));
+    int pid = query.lastInsertId().toInt();
+
+    ProductManager pm;
+    QVariantMap prod = pm.productByBarcode("xyz");
+    QCOMPARE(prod.value("id").toInt(), pid);
+    QCOMPARE(prod.value("name").toString(), QString("Item"));
 
     db.close();
     QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
@@ -760,6 +789,8 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&employeeTest, argc, argv);
     EmployeeWindowTest empWinTest;
     status |= QTest::qExec(&empWinTest, argc, argv);
+    InventoryWindowTest invWinTest;
+    status |= QTest::qExec(&invWinTest, argc, argv);
     BarcodeScannerTest barcodeTest;
     status |= QTest::qExec(&barcodeTest, argc, argv);
     return status;

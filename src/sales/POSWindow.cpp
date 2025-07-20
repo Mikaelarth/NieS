@@ -5,6 +5,7 @@
 #include "invoices/InvoicePrinter.h"
 #include "returns/ReturnManager.h"
 #include "loyalty/LoyaltyManager.h"
+#include "barcode/BarcodeScanner.h"
 
 namespace {
 enum ProductRoles {
@@ -26,11 +27,13 @@ enum ProductRoles {
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
 
-POSWindow::POSWindow(ProductManager *pm, SalesManager *sm, LoyaltyManager *lm, QWidget *parent)
+POSWindow::POSWindow(ProductManager *pm, SalesManager *sm, LoyaltyManager *lm,
+                     QWidget *parent, BarcodeScanner *scanner)
     : QWidget(parent),
       m_pm(pm),
     m_sm(sm),
     m_loyalty(lm),
+    m_scanner(scanner),
     m_paymentBox(new QComboBox(this)),
     m_returnBtn(new QPushButton(tr("Return"), this)),
     m_invoiceBtn(new QPushButton(tr("Print Invoice"), this)),
@@ -59,6 +62,9 @@ POSWindow::POSWindow(ProductManager *pm, SalesManager *sm, LoyaltyManager *lm, Q
 
     connect(m_returnBtn, &QPushButton::clicked, this, &POSWindow::onReturn);
     connect(m_invoiceBtn, &QPushButton::clicked, this, &POSWindow::onPrintInvoice);
+    if (m_scanner)
+        connect(m_scanner, &BarcodeScanner::codeScanned,
+                this, &POSWindow::onBarcodeScanned);
 
     QFormLayout *form = new QFormLayout;
     form->addRow(tr("Product"), m_productBox);
@@ -164,6 +170,21 @@ void POSWindow::onPrintInvoice()
 
     QMessageBox::information(this, tr("Invoice"),
                              tr("Invoice printed to %1").arg(path));
+}
+
+void POSWindow::onBarcodeScanned(const QString &code)
+{
+    QVariantMap prod = m_pm->productByBarcode(code);
+    if (prod.isEmpty())
+        return;
+    int pid = prod.value("id").toInt();
+    for (int i = 0; i < m_productBox->count(); ++i) {
+        if (m_productBox->itemData(i, IdRole).toInt() == pid) {
+            m_productBox->setCurrentIndex(i);
+            break;
+        }
+    }
+    m_qtySpin->setValue(m_qtySpin->value() + 1);
 }
 
 QString POSWindow::askInvoicePath()

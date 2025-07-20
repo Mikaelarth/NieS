@@ -84,6 +84,25 @@ QList<QVariantMap> ProductManager::listProducts()
     return products;
 }
 
+QVariantMap ProductManager::productByBarcode(const QString &barcode)
+{
+    QVariantMap product;
+    QSqlQuery query;
+    query.prepare("SELECT id, name, price, discount FROM products WHERE barcode = :bc");
+    query.bindValue(":bc", barcode);
+    if (!query.exec() || !query.next()) {
+        m_lastError = query.lastError().text();
+        if (m_lastError.isEmpty())
+            m_lastError = QStringLiteral("Product not found");
+        return product;
+    }
+    product.insert("id", query.value("id"));
+    product.insert("name", query.value("name"));
+    product.insert("price", query.value("price"));
+    product.insert("discount", query.value("discount"));
+    return product;
+}
+
 QString ProductManager::lastError() const
 {
     return m_lastError;

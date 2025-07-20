@@ -9,6 +9,7 @@ class POSWindowTest : public QObject
 private slots:
     void sellItemUpdatesInventory();
     void printInvoiceCreatesFile();
+    void scanSelectsProduct();
 };
 
 #endif // POS_WINDOW_TEST_H

@@ -17,6 +17,7 @@ public:
     bool updateProduct(int id, const QString &name, double price, double discount);
     bool deleteProduct(int id);
     QList<QVariantMap> listProducts();
+    QVariantMap productByBarcode(const QString &barcode);
 
     QString lastError() const;
 

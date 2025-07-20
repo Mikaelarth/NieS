@@ -12,6 +12,7 @@ class PaymentProcessor;
 class InvoicePrinter;
 class ReturnManager;
 class LoyaltyManager;
+class BarcodeScanner;
 class QLineEdit;
 
 class POSWindow : public QWidget
@@ -19,7 +20,9 @@ class POSWindow : public QWidget
     Q_OBJECT
 public:
     explicit POSWindow(ProductManager *pm, SalesManager *sm,
-                       LoyaltyManager *lm = nullptr, QWidget *parent = nullptr);
+                       LoyaltyManager *lm = nullptr,
+                       QWidget *parent = nullptr,
+                       BarcodeScanner *scanner = nullptr);
 
 public slots:
     void loadProducts();
@@ -28,6 +31,7 @@ private slots:
     void onSell();
     void onReturn();
     void onPrintInvoice();
+    void onBarcodeScanned(const QString &code);
 
 protected:
     virtual QString askInvoicePath();
@@ -46,6 +50,7 @@ private:
     InvoicePrinter *m_printer;
     ReturnManager *m_returns;
     LoyaltyManager *m_loyalty;
+    BarcodeScanner *m_scanner;
 };
 
 #endif // POSWINDOW_H

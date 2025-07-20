@@ -12,6 +12,7 @@
 #include "ProductManager.h"
 #include "SalesManager.h"
 #include "loyalty/LoyaltyManager.h"
+#include "barcode/BarcodeScanner.h"
 #include "pos_window_test.h"
 
 void POSWindowTest::sellItemUpdatesInventory()
@@ -130,6 +131,63 @@ void POSWindowTest::printInvoiceCreatesFile()
     QString contents = QString::fromUtf8(f.readAll());
     QVERIFY(contents.contains(QString("Invoice ID: %1").arg(saleId)));
     f.close();
+
+    db.close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+
+void POSWindowTest::scanSelectsProduct()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(":memory:");
+    QVERIFY(db.open());
+
+    QSqlQuery query;
+    QVERIFY(query.exec("CREATE TABLE products("\
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"\
+                       "name TEXT,"\
+                       "price REAL,"\
+                       "discount REAL DEFAULT 0,"\
+                       "barcode TEXT,"\
+                       "created_at TEXT,"\
+                       "updated_at TEXT)"));
+    QVERIFY(query.exec("CREATE TABLE inventory("\
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"\
+                       "product_id INTEGER,"\
+                       "quantity INTEGER,"\
+                       "last_update TEXT)"));
+    QVERIFY(query.exec("CREATE TABLE sales("\
+                       "id INTEGER PRIMARY KEY AUTOINCREMENT,"\
+                       "product_id INTEGER,"\
+                       "quantity INTEGER,"\
+                       "sale_date TEXT,"\
+                       "total REAL)"));
+
+    QVERIFY(query.exec("INSERT INTO products(name, price, discount, barcode) VALUES('Item', 2.0, 0.0, '111')"));
+    int productId = query.lastInsertId().toInt();
+    QVERIFY(query.exec(QString("INSERT INTO inventory(product_id, quantity) VALUES(%1, 5)").arg(productId)));
+
+    ProductManager pm;
+    SalesManager sm;
+    LoyaltyManager lm;
+    BarcodeScanner scanner;
+    POSWindow w(&pm, &sm, &lm, nullptr, &scanner);
+    w.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&w));
+
+    scanner.scan("111");
+
+    auto qtySpin = w.findChild<QSpinBox*>("qtySpin");
+    QVERIFY(qtySpin);
+    QCOMPARE(qtySpin->value(), 2); // default 1 + 1 from scan
+
+    QVERIFY(QMetaObject::invokeMethod(&w, "onSell", Qt::DirectConnection));
+
+    QVERIFY(query.exec(QString("SELECT quantity FROM inventory WHERE product_id=%1").arg(productId)));
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toInt(), 3); // sold 2 items
 
     db.close();
     QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
