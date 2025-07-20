@@ -3,6 +3,7 @@ project(NieS LANGUAGES CXX)
 
 add_subdirectory(src)
 add_subdirectory(examples/connectdb)
+add_subdirectory(mobile)
 
 enable_testing()
 add_subdirectory(tests)
