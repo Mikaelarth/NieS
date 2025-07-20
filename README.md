@@ -119,6 +119,12 @@ executable. Use `lupdate` to update the `.ts` files and `cmake` will compile
 them to `.qm` at build time. At runtime, `NieSApp` selects the translation that
 matches your system locale.
 
+To add a new language, duplicate `translations/NieS_fr.ts` with the desired
+locale name such as `NieS_es.ts`. Translate the strings inside the
+`<translation>` tags and run `lrelease` to produce the `.qm` file. Copy this
+compiled file to the `translations` folder so the application can load it at
+startup.
+
 ### Payment Processing (Simulated)
 
 `PaymentProcessor` currently performs no real transactions. Calls to process
