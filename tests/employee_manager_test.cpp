@@ -76,3 +76,21 @@ void EmployeeManagerTest::recordWorkPersists()
     QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
 }
 
+void EmployeeManagerTest::recordWorkRejectsNegative()
+{
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(":memory:");
+    QVERIFY(db.open());
+
+    setupTables();
+
+    EmployeeManager mgr;
+    QVERIFY(!mgr.recordWork(1, -3));
+    QCOMPARE(mgr.lastError(), QString("Invalid hours"));
+
+    db.close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+

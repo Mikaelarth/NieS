@@ -32,8 +32,10 @@ void EmployeeManager::setHourlyRate(int employeeId, double rate)
 
 bool EmployeeManager::recordWork(int employeeId, double hours)
 {
-    if (hours < 0)
+    if (hours < 0) {
+        m_lastError = QStringLiteral("Invalid hours");
         return false;
+    }
     QSqlQuery q;
     q.prepare("SELECT hours_worked FROM employees WHERE id=?");
     q.addBindValue(employeeId);

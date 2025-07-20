@@ -10,6 +10,7 @@ private slots:
     void payrollZeroByDefault();
     void schedulingAddsShift();
     void recordWorkPersists();
+    void recordWorkRejectsNegative();
 };
 
 #endif // EMPLOYEE_MANAGER_TEST_H
