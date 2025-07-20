@@ -7,6 +7,7 @@
 #include "sales/POSWindow.h"
 #include "ProductManager.h"
 #include "SalesManager.h"
+#include "loyalty/LoyaltyManager.h"
 #include "pos_window_test.h"
 
 void POSWindowTest::sellItemUpdatesInventory()
@@ -43,7 +44,8 @@ void POSWindowTest::sellItemUpdatesInventory()
 
     ProductManager pm;
     SalesManager sm;
-    POSWindow w(&pm, &sm);
+    LoyaltyManager lm;
+    POSWindow w(&pm, &sm, &lm);
     w.show();
     QVERIFY(QTest::qWaitForWindowExposed(&w));
 

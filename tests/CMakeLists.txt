@@ -17,6 +17,7 @@ set(TEST_SOURCES
     payment_processor_test.cpp
     dashboard_window_test.cpp
     stock_prediction_test.cpp
+    loyalty_manager_test.cpp
     config_option_test.cpp
     ${CMAKE_SOURCE_DIR}/src/DatabaseManager.cpp
     ${CMAKE_SOURCE_DIR}/src/UserManager.cpp
@@ -32,6 +33,8 @@ set(TEST_SOURCES
     ${CMAKE_SOURCE_DIR}/src/stock/StockPrediction.cpp
     ${CMAKE_SOURCE_DIR}/src/stock/StockPredictionWindow.cpp
     ${CMAKE_SOURCE_DIR}/src/dashboard/DashboardWindow.cpp
+    ${CMAKE_SOURCE_DIR}/src/loyalty/LoyaltyManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/loyalty/LoyaltyWindow.cpp
     ${CMAKE_SOURCE_DIR}/src/login/LoginDialog.cpp
     ${CMAKE_SOURCE_DIR}/src/login/MainWindow.cpp
     ${CMAKE_SOURCE_DIR}/src/login/UserWindow.cpp

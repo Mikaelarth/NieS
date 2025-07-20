@@ -22,6 +22,8 @@ add_executable(NieSApp
     stock/StockPredictionWindow.cpp
     sales/POSWindow.cpp
     sales/SalesReportWindow.cpp
+    loyalty/LoyaltyManager.cpp
+    loyalty/LoyaltyWindow.cpp
     dashboard/DashboardWindow.cpp
     login/LoginDialog.cpp
     login/MainWindow.cpp
