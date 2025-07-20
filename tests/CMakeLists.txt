@@ -17,6 +17,7 @@ set(TEST_SOURCES
     payment_processor_test.cpp
     dashboard_window_test.cpp
     stock_prediction_test.cpp
+    config_option_test.cpp
     ${CMAKE_SOURCE_DIR}/src/DatabaseManager.cpp
     ${CMAKE_SOURCE_DIR}/src/UserManager.cpp
     ${CMAKE_SOURCE_DIR}/src/ProductManager.cpp

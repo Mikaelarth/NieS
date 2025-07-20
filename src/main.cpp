@@ -4,6 +4,7 @@
 #include <QTranslator>
 #include <QSettings>
 #include <QProcessEnvironment>
+#include <QCommandLineParser>
 #include "DatabaseManager.h"
 #include "UserManager.h"
 #include "UserSession.h"
@@ -17,6 +18,19 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
+    QCommandLineParser parser;
+    parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
+    QCommandLineOption configOption(QStringList{"config"},
+                                   "Path to configuration file",
+                                   "file");
+    parser.addOption(configOption);
+    parser.addHelpOption();
+    parser.process(app);
+
+    QString cmdConfigPath;
+    if (parser.isSet(configOption))
+        cmdConfigPath = parser.value(configOption);
 
     QTranslator translator;
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
@@ -50,7 +64,7 @@ int main(int argc, char *argv[])
         app.installTranslator(&translator);
     }
 
-    DatabaseManager db;
+    DatabaseManager db(cmdConfigPath);
     if (!db.open()) {
         QMessageBox::critical(nullptr, "Database Error", db.lastError());
         return -1;
