@@ -3,9 +3,11 @@
 #include "sales/POSWindow.h"
 #include "sales/SalesReportWindow.h"
 #include "login/UserWindow.h"
+#include "dashboard/DashboardWindow.h"
 #include "UserManager.h"
 #include "ProductManager.h"
 #include "SalesManager.h"
+#include "InventoryManager.h"
 #include "UserSession.h"
 #include <QMenuBar>
 #include <QMenu>
@@ -35,6 +37,10 @@ MainWindow::MainWindow(UserSession *session, QWidget *parent)
     m_usersAct = userMenu->addAction(tr("Manage Users"));
     m_usersAct->setObjectName("usersAct");
     connect(m_usersAct, &QAction::triggered, this, &MainWindow::openUsers);
+
+    m_dashboardAct = menuBar()->addAction(tr("Dashboard"));
+    m_dashboardAct->setObjectName("dashboardAct");
+    connect(m_dashboardAct, &QAction::triggered, this, &MainWindow::openDashboard);
 
     updatePermissions();
 }
@@ -75,6 +81,17 @@ void MainWindow::openUsers()
     m_userWindow->activateWindow();
 }
 
+void MainWindow::openDashboard()
+{
+    if (!m_dashboardWindow)
+        m_dashboardWindow = new DashboardWindow(new SalesManager(m_session, this),
+                                               new InventoryManager(m_session, this),
+                                               60000, this);
+    m_dashboardWindow->show();
+    m_dashboardWindow->raise();
+    m_dashboardWindow->activateWindow();
+}
+
 void MainWindow::updatePermissions()
 {
     const QString role = m_session ? m_session->role() : QString();
@@ -86,5 +103,6 @@ void MainWindow::updatePermissions()
         m_reportAct->setEnabled(false);
     if (role != "admin")
         m_usersAct->setEnabled(false);
+    m_dashboardAct->setEnabled(!role.isEmpty());
 }
 

@@ -32,6 +32,8 @@ Le projet en est à ses débuts. Les composants suivants sont disponibles :
 * Paiements numériques (cartes, mobile money, QR codes). Les transactions sont actuellement simulées.
 * Rapports financiers détaillés et calcul des bénéfices.
 * Tableaux de bord avec indicateurs clés (ventes, niveaux de stock).
+  Une entrée de menu **Dashboard** permet maintenant d'ouvrir ce tableau de bord
+  à tout moment.
 * Prédiction de stock et alertes de seuil critique.
 * Support multi‑utilisateurs connecté à une base de données partagée.
 * Gestion de sessions utilisateur avec vérification des rôles lors des
