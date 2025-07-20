@@ -6,6 +6,8 @@
 #include "UserManager.h"
 #include "UserSession.h"
 #include "login_test.h"
+#include <QLineEdit>
+#include <QCheckBox>
 
 void LoginDialogTest::invalidCredentials()
 {
@@ -63,5 +65,23 @@ void LoginDialogTest::validCredentials()
 
     db.close();
     QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+
+void LoginDialogTest::togglePasswordVisibility()
+{
+    LoginDialog dlg(nullptr, nullptr, false);
+    dlg.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&dlg));
+
+    auto passEdit = dlg.findChild<QLineEdit*>("passwordEdit");
+    auto check = dlg.findChild<QCheckBox*>("showPassCheck");
+    QVERIFY(passEdit && check);
+    QCOMPARE(passEdit->echoMode(), QLineEdit::Password);
+
+    check->setChecked(true);
+    QCOMPARE(passEdit->echoMode(), QLineEdit::Normal);
+
+    check->setChecked(false);
+    QCOMPARE(passEdit->echoMode(), QLineEdit::Password);
 }
 
