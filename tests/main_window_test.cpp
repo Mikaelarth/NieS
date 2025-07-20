@@ -8,6 +8,7 @@
 #include "UserSession.h"
 #include "main_window_test.h"
 #include <QAction>
+#include "dashboard/DashboardWindow.h"
 
 static void setupUsersTable()
 {
@@ -96,6 +97,27 @@ void MainWindowTest::viewerNoAccess()
     QVERIFY(manageAct && posAct);
     QVERIFY(!manageAct->isEnabled());
     QVERIFY(!posAct->isEnabled());
+}
+
+void MainWindowTest::dashboardActionOpens()
+{
+    ScopedDb scoped;
+    UserManager um;
+    UserSession session(&um, &um);
+    QVERIFY(um.createUser("dash", "pw", "seller"));
+    QVERIFY(session.login("dash", "pw"));
+
+    MainWindow win(&session);
+    win.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&win));
+
+    QAction *dashAct = win.findChild<QAction*>("dashboardAct");
+    QVERIFY(dashAct);
+    QVERIFY(dashAct->isEnabled());
+    QVERIFY(!win.findChild<DashboardWindow*>());
+    dashAct->trigger();
+    DashboardWindow *dash = win.findChild<DashboardWindow*>();
+    QVERIFY(dash && dash->isVisible());
 }
 
 

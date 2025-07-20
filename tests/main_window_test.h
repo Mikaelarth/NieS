@@ -10,6 +10,7 @@ private slots:
     void adminFullAccess();
     void sellerLimitedAccess();
     void viewerNoAccess();
+    void dashboardActionOpens();
 };
 
 #endif // MAIN_WINDOW_TEST_H
