@@ -6,6 +6,10 @@
 #include <QCoreApplication>
 #include <QStringList>
 #include <QDateTime>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QFile>
 
 DatabaseManager::DatabaseManager(const QString &configPath, QObject *parent)
     : QObject(parent),
@@ -40,6 +44,9 @@ bool DatabaseManager::open()
     m_offlinePath = env.contains("NIES_DB_OFFLINE_PATH")
             ? env.value("NIES_DB_OFFLINE_PATH")
             : m_settings.value("database/offline_path", "nies_local.db").toString();
+    m_backupPath = env.contains("NIES_DB_BACKUP_PATH")
+            ? env.value("NIES_DB_BACKUP_PATH")
+            : m_settings.value("database/backup_path", "nies_backup.json").toString();
     m_driver = env.contains("NIES_DB_DRIVER")
             ? env.value("NIES_DB_DRIVER")
             : m_settings.value("database/driver", "QMYSQL").toString();
@@ -55,6 +62,8 @@ bool DatabaseManager::open()
             m_lastError = m_db.lastError().text();
             return false;
         }
+        // Load existing backup if available
+        restoreBackup(m_backupPath);
         return true;
     }
 
@@ -103,7 +112,7 @@ void DatabaseManager::close()
 bool DatabaseManager::synchronize()
 {
     if (!m_offline)
-        return true;
+        return exportBackup(m_backupPath);
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     const QString host = env.contains("NIES_DB_HOST")
@@ -310,10 +319,127 @@ bool DatabaseManager::synchronize()
 
     remote.close();
     QSqlDatabase::removeDatabase("sync");
+    if (!exportBackup(m_backupPath))
+        return false;
     return true;
 }
 
 QString DatabaseManager::lastError() const
 {
     return m_lastError;
+}
+
+bool DatabaseManager::exportBackup(const QString &filePath)
+{
+    QString path = filePath.isEmpty() ? m_backupPath : filePath;
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly)) {
+        m_lastError = file.errorString();
+        return false;
+    }
+
+    QJsonObject root;
+    const QStringList tables = {"users", "products", "inventory", "sales"};
+    for (const QString &table : tables) {
+        QSqlQuery q(m_db);
+        if (!q.exec(QString("SELECT * FROM %1").arg(table)))
+            continue;
+        QSqlRecord rec = q.record();
+        QJsonArray arr;
+        while (q.next()) {
+            QJsonObject obj;
+            for (int i = 0; i < rec.count(); ++i)
+                obj.insert(rec.fieldName(i), QJsonValue::fromVariant(q.value(i)));
+            arr.append(obj);
+        }
+        root.insert(table, arr);
+    }
+
+    QJsonDocument doc(root);
+    file.write(doc.toJson());
+    file.close();
+    return true;
+}
+
+bool DatabaseManager::restoreBackup(const QString &filePath)
+{
+    QString path = filePath.isEmpty() ? m_backupPath : filePath;
+    QFile file(path);
+    if (!file.exists())
+        return true; // nothing to restore
+    if (!file.open(QIODevice::ReadOnly)) {
+        m_lastError = file.errorString();
+        return false;
+    }
+
+    QByteArray data = file.readAll();
+    file.close();
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(data, &err);
+    if (err.error != QJsonParseError::NoError || !doc.isObject()) {
+        m_lastError = err.errorString();
+        return false;
+    }
+
+    QJsonObject root = doc.object();
+    for (auto it = root.constBegin(); it != root.constEnd(); ++it) {
+        QString table = it.key();
+        QJsonArray arr = it.value().toArray();
+        QSqlQuery tmp(m_db);
+        if (!tmp.exec(QString("SELECT * FROM %1 LIMIT 1").arg(table)))
+            continue;
+        QSqlRecord rec = tmp.record();
+        for (const QJsonValue &val : arr) {
+            QJsonObject obj = val.toObject();
+            QVariant idVal = obj.value("id").toVariant();
+            QSqlQuery chk(m_db);
+            chk.prepare(QString("SELECT COUNT(*) FROM %1 WHERE id=?").arg(table));
+            chk.addBindValue(idVal);
+            if (!chk.exec() || !chk.next())
+                continue;
+            bool exists = chk.value(0).toInt() > 0;
+            if (exists) {
+                QStringList sets;
+                for (int i = 0; i < rec.count(); ++i) {
+                    const QString fname = rec.fieldName(i);
+                    if (fname == "id")
+                        continue;
+                    sets << QString("%1=?").arg(fname);
+                }
+                QSqlQuery upd(m_db);
+                upd.prepare(QString("UPDATE %1 SET %2 WHERE id=?")
+                            .arg(table)
+                            .arg(sets.join(',')));
+                for (int i = 0; i < rec.count(); ++i) {
+                    if (rec.fieldName(i) == "id")
+                        continue;
+                    upd.addBindValue(obj.value(rec.fieldName(i)).toVariant());
+                }
+                upd.addBindValue(idVal);
+                if (!upd.exec()) {
+                    m_lastError = upd.lastError().text();
+                    return false;
+                }
+            } else {
+                QStringList cols, placeholders;
+                for (int i = 0; i < rec.count(); ++i) {
+                    cols << rec.fieldName(i);
+                    placeholders << "?";
+                }
+                QSqlQuery ins(m_db);
+                ins.prepare(QString("INSERT INTO %1(%2) VALUES(%3)")
+                            .arg(table)
+                            .arg(cols.join(','))
+                            .arg(placeholders.join(',')));
+                for (int i = 0; i < rec.count(); ++i)
+                    ins.addBindValue(obj.value(rec.fieldName(i)).toVariant());
+                if (!ins.exec()) {
+                    m_lastError = ins.lastError().text();
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
 }

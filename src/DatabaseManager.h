@@ -15,6 +15,8 @@ public:
 
     bool open();
     bool synchronize();
+    bool exportBackup(const QString &filePath = QString());
+    bool restoreBackup(const QString &filePath = QString());
     void close();
     QString lastError() const;
     bool isOffline() const { return m_offline; }
@@ -27,6 +29,7 @@ private:
     QSettings m_settings;
     bool m_offline = false;
     QString m_offlinePath;
+    QString m_backupPath;
     QString m_driver = "QMYSQL";
     QString m_paymentApiKey;
     QString m_paymentEndpoint;
