@@ -5,7 +5,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt5 COMPONENTS Widgets Sql Network LinguistTools REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Sql Network LinguistTools Charts REQUIRED)
 
 add_executable(NieSApp
     main.cpp
@@ -29,7 +29,7 @@ add_executable(NieSApp
     UserSession.cpp
 )
 
-target_link_libraries(NieSApp Qt5::Widgets Qt5::Sql Qt5::Network)
+target_link_libraries(NieSApp Qt5::Widgets Qt5::Sql Qt5::Network Qt5::Charts)
 target_include_directories(NieSApp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(TS_FILES

@@ -8,6 +8,12 @@
 #include <QVariantMap>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlDatabase>
+#include <QStringList>
+#include <QtCharts/QChartView>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QBarCategoryAxis>
+#include <QtCharts/QPieSeries>
 
 DashboardWindow::DashboardWindow(SalesManager *sm, InventoryManager *im,
                                  int interval, QWidget *parent)
@@ -27,6 +33,18 @@ DashboardWindow::DashboardWindow(SalesManager *sm, InventoryManager *im,
     m_stockLabel = new QLabel(this);
     m_stockLabel->setObjectName("stockLabel");
     layout->addWidget(m_stockLabel);
+
+    auto *salesChart = new QtCharts::QChart();
+    salesChart->setTitle(tr("Daily Revenue"));
+    m_salesChart = new QtCharts::QChartView(salesChart, this);
+    m_salesChart->setObjectName("salesChart");
+    layout->addWidget(m_salesChart);
+
+    auto *stockChart = new QtCharts::QChart();
+    stockChart->setTitle(tr("Inventory Levels"));
+    m_stockChart = new QtCharts::QChartView(stockChart, this);
+    m_stockChart->setObjectName("stockChart");
+    layout->addWidget(m_stockChart);
 
     m_predictionList = new QListWidget(this);
     m_predictionList->setObjectName("predictionList");
@@ -70,6 +88,35 @@ void DashboardWindow::refresh()
         m_unitsLabel->setText(tr("Units sold: %1").arg(units));
     if (m_stockLabel)
         m_stockLabel->setText(tr("Stock on hand: %1").arg(stock));
+
+    if (m_salesChart) {
+        auto chart = m_salesChart->chart();
+        chart->removeAllSeries();
+        QStringList categories;
+        auto *set = new QtCharts::QBarSet(tr("Revenue"));
+        QSqlQuery q("SELECT sale_date, SUM(total) FROM sales GROUP BY sale_date ORDER BY sale_date");
+        while (q.next()) {
+            *set << q.value(1).toDouble();
+            categories << q.value(0).toString();
+        }
+        auto *series = new QtCharts::QBarSeries(chart);
+        series->append(set);
+        chart->addSeries(series);
+        auto *axis = new QtCharts::QBarCategoryAxis(chart);
+        axis->append(categories);
+        chart->setAxisX(axis, series);
+        chart->createDefaultAxes();
+    }
+
+    if (m_stockChart) {
+        auto chart = m_stockChart->chart();
+        chart->removeAllSeries();
+        auto *series = new QtCharts::QPieSeries(chart);
+        QSqlQuery q("SELECT product_id, quantity FROM inventory");
+        while (q.next())
+            series->append(QString::number(q.value(0).toInt()), q.value(1).toInt());
+        chart->addSeries(series);
+    }
 
     refreshPredictions();
 }
