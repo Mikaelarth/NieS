@@ -2,6 +2,8 @@
 #include <QMessageBox>
 #include <QLocale>
 #include <QTranslator>
+#include <QSettings>
+#include <QProcessEnvironment>
 #include "DatabaseManager.h"
 #include "UserManager.h"
 #include "UserSession.h"
@@ -14,7 +16,21 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     QTranslator translator;
-    const QString locale = QLocale::system().name();
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+
+    QString locale;
+    if (env.contains("NIES_LANG"))
+        locale = env.value("NIES_LANG");
+    if (locale.isEmpty()) {
+        QString cfg = env.contains("NIES_CONFIG_PATH")
+                ? env.value("NIES_CONFIG_PATH")
+                : QCoreApplication::applicationDirPath() + "/config.ini";
+        QSettings settings(cfg, QSettings::IniFormat);
+        locale = settings.value("app/language").toString();
+    }
+    if (locale.isEmpty())
+        locale = QLocale::system().name();
+
     const QString trPath = QCoreApplication::applicationDirPath() + "/translations";
     if (translator.load("NieS_" + locale, trPath)) {
         app.installTranslator(&translator);
