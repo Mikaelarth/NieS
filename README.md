@@ -78,6 +78,26 @@ make
 ./NieSApp
 ```
 
+### REST API server
+
+An optional HTTP server exposes product and sales data as a small REST API.
+Build the `NieSApi` target and launch it (default port `8080`):
+
+```bash
+mkdir build && cd build
+cmake ..
+make NieSApi
+./NieSApi
+```
+
+Available endpoints:
+
+- `GET /products` – list products
+- `POST /products` – JSON body `{"name": ..., "price": ..., "discount": 0.0}`
+- `GET /sales` – list recorded sales
+- `POST /sales` – JSON body `{"product_id": ..., "quantity": ...}`
+
+
 Before running, duplicate `config.example.ini` as `config.ini` and configure
 your database parameters. `DatabaseManager` looks for this file next to the
 executable by default. You may specify a custom location with the
