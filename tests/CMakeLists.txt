@@ -15,6 +15,7 @@ set(TEST_SOURCES
     return_manager_test.cpp
     invoice_printer_test.cpp
     payment_processor_test.cpp
+    rest_server_test.cpp
     dashboard_window_test.cpp
     stock_prediction_test.cpp
     loyalty_manager_test.cpp
@@ -38,6 +39,7 @@ set(TEST_SOURCES
     ${CMAKE_SOURCE_DIR}/src/login/LoginDialog.cpp
     ${CMAKE_SOURCE_DIR}/src/login/MainWindow.cpp
     ${CMAKE_SOURCE_DIR}/src/login/UserWindow.cpp
+    ${CMAKE_SOURCE_DIR}/src/api/RestServer.cpp
     ${CMAKE_SOURCE_DIR}/src/UserSession.cpp
 )
 

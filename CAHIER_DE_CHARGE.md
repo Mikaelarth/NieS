@@ -22,6 +22,7 @@ Concevoir une application de gestion moderne pour boutique ou restaurant. Elle d
 - Programme de fidélité et cartes de membres.
 - Application mobile compagnon pour consultation et notifications.
 - API REST pour intégration e-commerce et systèmes tiers.
+- Port du serveur REST configurable via `--port` ou `NIES_REST_PORT`.
 - Gestion du personnel (planning et feuilles de paie).
 - Inventaire par codes-barres ou QR codes.
 - Interface multi-langues pour une portée internationale.
@@ -29,6 +30,7 @@ Concevoir une application de gestion moderne pour boutique ou restaurant. Elle d
 ## Aspects techniques
 
 - Base de données **MySQL** avec scripts de migration.
+- Pilote SQL configurable (`QMYSQL` ou `QSQLITE`).
 - Interface **Qt** (Widgets ou QML) pour le poste de travail et terminaux mobiles.
 - Architecture modulaire séparant interface, logique métier et accès aux données.
 - Sécurité renforcée : mots de passe hachés et contrôle des accès.
