@@ -9,6 +9,7 @@
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlDatabase>
 #include <QStringList>
+#include <QtCharts/QChart>
 #include <QtCharts/QChartView>
 #include <QtCharts/QBarSeries>
 #include <QtCharts/QBarSet>
