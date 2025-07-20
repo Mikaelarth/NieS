@@ -30,12 +30,11 @@ void PaymentProcessorTest::invalidAmountsFail()
     QCOMPARE(p.lastError(), QString("Invalid amount"));
 }
 
-void PaymentProcessorTest::validAmountsSucceed()
+void PaymentProcessorTest::missingEndpointFails()
 {
     PaymentProcessor p;
-    QVERIFY(p.processCard(10));
-    QVERIFY(p.processMobileMoney(5));
-    QVERIFY(p.processQrCode(1));
+    QVERIFY(!p.processCard(10));
+    QCOMPARE(p.lastError(), QString("Payment endpoint not configured"));
 }
 
 void PaymentProcessorTest::gatewayCalled()

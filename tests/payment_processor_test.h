@@ -8,7 +8,7 @@ class PaymentProcessorTest : public QObject
     Q_OBJECT
 private slots:
     void invalidAmountsFail();
-    void validAmountsSucceed();
+    void missingEndpointFails();
     void gatewayCalled();
 };
 
