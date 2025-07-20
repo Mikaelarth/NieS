@@ -16,7 +16,8 @@ class DashboardWindow : public QWidget
 {
     Q_OBJECT
 public:
-    explicit DashboardWindow(SalesManager *sm, InventoryManager *im, QWidget *parent = nullptr);
+    explicit DashboardWindow(SalesManager *sm, InventoryManager *im,
+                             int interval = 60000, QWidget *parent = nullptr);
 
 public slots:
     void refresh();
