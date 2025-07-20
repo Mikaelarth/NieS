@@ -164,10 +164,15 @@ startup.
 
 ### Payment Processing (Simulated)
 
-`PaymentProcessor` currently performs no real transactions. Calls to process
-card, mobile money or QR code payments simply log the amount and report success
-without contacting any external service. Integrate a payment gateway in this
-class to accept actual payments.
+`PaymentProcessor` sends an HTTP request to the configured payment gateway for
+every card, mobile money or QR code payment. The gateway URL and API key can be
+supplied in the environment as `NIES_PAYMENT_ENDPOINT` and
+`NIES_PAYMENT_API_KEY` or set in the `[payment]` section of `config.ini`
+(`endpoint` and `api_key`). Transactions are still simulated, so the gateway
+returns success without charging anything.
+
+Integrate a real provider by implementing the network logic in
+`PaymentProcessor` and ensuring these credentials point to a live service.
 
 ### User Sessions and Permissions
 
