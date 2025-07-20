@@ -130,18 +130,23 @@ void MainWindow::openLoyalty()
 void MainWindow::updatePermissions()
 {
     const QString role = m_session ? m_session->role() : QString();
-    if (role != "admin")
+    const bool isAdmin = (role == "admin");
+    const bool isSeller = (role == "seller");
+
+    if (!isAdmin) {
         m_manageAct->setEnabled(false);
-    if (role != "seller" && role != "admin")
-        m_posAct->setEnabled(false);
-    if (role != "admin")
         m_reportAct->setEnabled(false);
-    if (role != "admin")
         m_usersAct->setEnabled(false);
-    m_dashboardAct->setEnabled(!role.isEmpty());
+    }
+
+    if (!isAdmin && !isSeller)
+        m_posAct->setEnabled(false);
+
+    const bool hasRole = !role.isEmpty();
+    m_dashboardAct->setEnabled(hasRole);
     if (m_predictAct)
-        m_predictAct->setEnabled(!role.isEmpty());
+        m_predictAct->setEnabled(hasRole);
     if (m_loyaltyAct)
-        m_loyaltyAct->setEnabled(!role.isEmpty());
+        m_loyaltyAct->setEnabled(hasRole);
 }
 
