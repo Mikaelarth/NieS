@@ -17,6 +17,7 @@
 #include "user_window_test.h"
 #include "config_option_test.h"
 #include "employee_manager_test.h"
+#include "employee_window_test.h"
 #include "barcode_scanner_test.h"
 #include <QTemporaryDir>
 #include <QProcess>
@@ -757,6 +758,8 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&stockTest, argc, argv);
     EmployeeManagerTest employeeTest;
     status |= QTest::qExec(&employeeTest, argc, argv);
+    EmployeeWindowTest empWinTest;
+    status |= QTest::qExec(&empWinTest, argc, argv);
     BarcodeScannerTest barcodeTest;
     status |= QTest::qExec(&barcodeTest, argc, argv);
     return status;

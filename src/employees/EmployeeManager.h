@@ -3,8 +3,8 @@
 
 #include <QObject>
 #include <QDateTime>
-#include <QHash>
 #include <QList>
+#include <QVariantMap>
 #include <utility>
 
 class EmployeeManager : public QObject
@@ -19,15 +19,11 @@ public:
 
     double payroll(int employeeId) const;
     QList<QPair<QDateTime, QDateTime>> shifts(int employeeId) const;
+    QList<QVariantMap> listEmployees() const;
 
+    QString lastError() const;
 private:
-    struct EmployeeInfo {
-        double rate = 0.0;
-        double hours = 0.0;
-        QList<QPair<QDateTime, QDateTime>> schedule;
-    };
-
-    QHash<int, EmployeeInfo> m_data;
-};
+    mutable QString m_lastError;
+}; 
 
 #endif // EMPLOYEEMANAGER_H

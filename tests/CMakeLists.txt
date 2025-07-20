@@ -20,6 +20,7 @@ set(TEST_SOURCES
     stock_prediction_test.cpp
     loyalty_manager_test.cpp
     employee_manager_test.cpp
+    employee_window_test.cpp
     barcode_scanner_test.cpp
     config_option_test.cpp
     ${CMAKE_SOURCE_DIR}/src/DatabaseManager.cpp
@@ -41,6 +42,7 @@ set(TEST_SOURCES
     ${CMAKE_SOURCE_DIR}/src/login/LoginDialog.cpp
     ${CMAKE_SOURCE_DIR}/src/login/MainWindow.cpp
     ${CMAKE_SOURCE_DIR}/src/login/UserWindow.cpp
+    ${CMAKE_SOURCE_DIR}/src/employees/EmployeeWindow.cpp
     ${CMAKE_SOURCE_DIR}/src/api/RestServer.cpp
     ${CMAKE_SOURCE_DIR}/src/UserSession.cpp
     ${CMAKE_SOURCE_DIR}/src/employees/EmployeeManager.cpp

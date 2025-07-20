@@ -9,6 +9,7 @@ class EmployeeManagerTest : public QObject
 private slots:
     void payrollZeroByDefault();
     void schedulingAddsShift();
+    void recordWorkPersists();
 };
 
 #endif // EMPLOYEE_MANAGER_TEST_H

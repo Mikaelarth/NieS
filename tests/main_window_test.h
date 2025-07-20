@@ -12,6 +12,7 @@ private slots:
     void viewerNoAccess();
     void dashboardActionOpens();
     void predictionActionOpens();
+    void employeesActionOpens();
 };
 
 #endif // MAIN_WINDOW_TEST_H
