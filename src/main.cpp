@@ -10,6 +10,9 @@
 #include "login/LoginDialog.h"
 #include "login/MainWindow.h"
 #include "NetworkMonitor.h"
+#include "dashboard/DashboardWindow.h"
+#include "SalesManager.h"
+#include "InventoryManager.h"
 
 int main(int argc, char *argv[])
 {
@@ -17,6 +20,17 @@ int main(int argc, char *argv[])
 
     QTranslator translator;
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+
+    int dashInterval = 60000;
+    {
+        QString cfg = env.contains("NIES_CONFIG_PATH")
+                ? env.value("NIES_CONFIG_PATH")
+                : QCoreApplication::applicationDirPath() + "/config.ini";
+        QSettings settings(cfg, QSettings::IniFormat);
+        dashInterval = settings.value("dashboard/update_interval", dashInterval).toInt();
+    }
+    if (env.contains("NIES_DASH_INTERVAL"))
+        dashInterval = env.value("NIES_DASH_INTERVAL").toInt();
 
     QString locale;
     if (env.contains("NIES_LANG"))
@@ -56,6 +70,11 @@ int main(int argc, char *argv[])
         db.close();
         return 0;
     }
+
+    SalesManager dashSm(&session);
+    InventoryManager dashIm(&session);
+    DashboardWindow dashboard(&dashSm, &dashIm, dashInterval);
+    dashboard.show();
 
     MainWindow mainWin(&session);
     mainWin.show();

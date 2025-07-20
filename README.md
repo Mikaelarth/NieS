@@ -91,6 +91,11 @@ connection settings via environment variables:
 - `NIES_DB_DRIVER` – Qt SQL driver (e.g. `QMYSQL`, `QSQLITE`)
 - `NIES_DB_OFFLINE_PATH` – path to the offline SQLite file
 - `NIES_LANG` – override the UI language (e.g. `fr_FR`)
+- `NIES_DASH_INTERVAL` – dashboard refresh interval in milliseconds
+
+The dashboard update frequency can also be configured in `config.ini` under the
+`[dashboard]` section with the key `update_interval` (default `60000`). The
+`NIES_DASH_INTERVAL` environment variable overrides this value at runtime.
 
 ### Offline Mode
 

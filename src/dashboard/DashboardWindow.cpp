@@ -9,7 +9,8 @@
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlDatabase>
 
-DashboardWindow::DashboardWindow(SalesManager *sm, InventoryManager *im, QWidget *parent)
+DashboardWindow::DashboardWindow(SalesManager *sm, InventoryManager *im,
+                                 int interval, QWidget *parent)
     : QWidget(parent), m_sm(sm), m_im(im)
 {
     setWindowTitle(tr("Dashboard"));
@@ -32,7 +33,7 @@ DashboardWindow::DashboardWindow(SalesManager *sm, InventoryManager *im, QWidget
     layout->addWidget(m_predictionList);
 
     connect(&m_timer, &QTimer::timeout, this, &DashboardWindow::refreshPredictions);
-    m_timer.start(60000); // update every minute by default
+    m_timer.start(interval);
 
     if (m_sm)
         connect(m_sm, SIGNAL(saleRecorded(int,int)), this, SLOT(refreshPredictions()));
