@@ -10,6 +10,10 @@ INCLUDEPATH += $$PWD/src
 # manually updating the project file whenever a new file is added.
 SOURCES += $$files($$PWD/src/*.cpp, true)
 
+# Remove API server sources from the desktop build
+SOURCES -= $$files($$PWD/src/api/*.cpp, true)
+HEADERS -= $$files($$PWD/src/api/*.h, true)
+
 # Collect header files recursively as well
 HEADERS += $$files($$PWD/src/*.h, true)
 
