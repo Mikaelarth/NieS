@@ -14,7 +14,7 @@
 
 ### Nouvelles tâches
 - [ ] Améliorer l\'UI d\'authentification
-- [ ] Intégrer les paiements numériques *(PaymentProcessor ne fait qu\'une simulation – intégration d\'une passerelle réelle nécessaire)*
+- [x] Intégrer les paiements numériques *(passerelle de paiement réelle intégrée dans PaymentProcessor)*
 - [x] Générer un tableau de bord complet
 - [x] Ajouter une option `--port` et la variable `NIES_REST_PORT` pour le serveur REST
 - [x] Prédiction de stock et de ventes *(module `StockPrediction` basique, pas encore relié à l\'interface)*
