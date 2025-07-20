@@ -25,8 +25,8 @@ signals:
 
 private:
     QString m_lastError;
-    InventoryManager m_inventory;
     UserSession *m_session = nullptr;
+    InventoryManager m_inventory;
 };
 
 #endif // SALESMANAGER_H
