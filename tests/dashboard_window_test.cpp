@@ -1,6 +1,7 @@
 #include <QtTest>
 #include <QApplication>
 #include <QLabel>
+#include <QtCharts/QChartView>
 
 #include "dashboard/DashboardWindow.h"
 #include "SalesManager.h"
@@ -43,10 +44,14 @@ void DashboardWindowTest::initUi()
     auto revenue = w.findChild<QLabel*>("revenueLabel");
     auto units = w.findChild<QLabel*>("unitsLabel");
     auto stock = w.findChild<QLabel*>("stockLabel");
-    QVERIFY(revenue && units && stock);
+    auto salesChart = w.findChild<QtCharts::QChartView*>("salesChart");
+    auto stockChart = w.findChild<QtCharts::QChartView*>("stockChart");
+    QVERIFY(revenue && units && stock && salesChart && stockChart);
     QCOMPARE(revenue->text(), QString("Total revenue: 10.5"));
     QCOMPARE(units->text(), QString("Units sold: 2"));
     QCOMPARE(stock->text(), QString("Stock on hand: 5"));
+    QVERIFY(!salesChart->chart()->series().isEmpty());
+    QVERIFY(!stockChart->chart()->series().isEmpty());
 
     db.close();
     QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);

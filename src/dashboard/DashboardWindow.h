@@ -3,6 +3,9 @@
 
 #include <QWidget>
 #include <QTimer>
+#include <QtCharts/QChartView>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QPieSeries>
 
 class QListWidget;
 #include "stock/StockPrediction.h"
@@ -11,6 +14,12 @@ class SalesManager;
 class InventoryManager;
 
 class QLabel;
+
+namespace QtCharts {
+class QChartView;
+class QBarSeries;
+class QPieSeries;
+}
 
 class DashboardWindow : public QWidget
 {
@@ -32,6 +41,8 @@ private:
     QLabel *m_revenueLabel = nullptr;
     QLabel *m_unitsLabel = nullptr;
     QLabel *m_stockLabel = nullptr;
+    QtCharts::QChartView *m_salesChart = nullptr;
+    QtCharts::QChartView *m_stockChart = nullptr;
 };
 
 #endif // DASHBOARDWINDOW_H
