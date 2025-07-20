@@ -2,7 +2,7 @@
 #define NETWORKMONITOR_H
 
 #include <QObject>
-#include <QtNetwork/QNetworkConfigurationManager>
+#include <QNetworkConfigurationManager>
 
 class NetworkMonitor : public QObject
 {
