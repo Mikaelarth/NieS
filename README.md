@@ -90,6 +90,7 @@ connection settings via environment variables:
 - `NIES_DB_PASSWORD` – database password
 - `NIES_DB_DRIVER` – Qt SQL driver (e.g. `QMYSQL`, `QSQLITE`)
 - `NIES_DB_OFFLINE_PATH` – path to the offline SQLite file
+- `NIES_LANG` – override the UI language (e.g. `fr_FR`)
 
 ### Offline Mode
 
@@ -117,7 +118,8 @@ This runs the application entirely with the local SQLite file `mydata.db`.
 The application loads translations from the `translations` directory next to the
 executable. Use `lupdate` to update the `.ts` files and `cmake` will compile
 them to `.qm` at build time. At runtime, `NieSApp` selects the translation that
-matches your system locale.
+matches your system locale by default. Set `language` in `config.ini` (section
+`[app]`) or the `NIES_LANG` environment variable to override it.
 
 To add a new language, duplicate `translations/NieS_fr.ts` with the desired
 locale name such as `NieS_es.ts`. Translate the strings inside the
