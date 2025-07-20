@@ -26,8 +26,10 @@ public:
 
     QString lastError() const;
 
-private:
+protected:
     virtual bool sendRequest(const QString &method, double amount);
+
+private:
     QString m_lastError;
     QNetworkAccessManager *m_manager;
     QString m_apiKey;
