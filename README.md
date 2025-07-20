@@ -92,6 +92,7 @@ connection settings via environment variables:
 - `NIES_DB_PASSWORD` – database password
 - `NIES_DB_DRIVER` – Qt SQL driver (e.g. `QMYSQL`, `QSQLITE`)
 - `NIES_DB_OFFLINE_PATH` – path to the offline SQLite file
+- `NIES_DB_BACKUP_PATH` – location of the JSON backup file
 - `NIES_LANG` – override the UI language (e.g. `fr_FR`)
 - `NIES_DASH_INTERVAL` – dashboard refresh interval in milliseconds
 
@@ -110,6 +111,11 @@ The application now includes a small `NetworkMonitor` helper that listens for
 changes in network connectivity. When offline mode is enabled and the network
 becomes available again, `DatabaseManager` automatically triggers
 `synchronize()` so pending rows are uploaded without manual intervention.
+
+`DatabaseManager` can also export a full backup of the current data set with
+`exportBackup()` and reload it later using `restoreBackup()`. Set
+`NIES_DB_BACKUP_PATH` to choose where this JSON backup is stored. Calling
+`synchronize()` while online simply generates the backup file.
 
 Example using environment variables:
 
