@@ -4,6 +4,7 @@
 #include "sales/SalesReportWindow.h"
 #include "login/UserWindow.h"
 #include "dashboard/DashboardWindow.h"
+#include "stock/StockPredictionWindow.h"
 #include "UserManager.h"
 #include "ProductManager.h"
 #include "SalesManager.h"
@@ -38,9 +39,15 @@ MainWindow::MainWindow(UserSession *session, QWidget *parent)
     m_usersAct->setObjectName("usersAct");
     connect(m_usersAct, &QAction::triggered, this, &MainWindow::openUsers);
 
+
     m_dashboardAct = menuBar()->addAction(tr("Dashboard"));
     m_dashboardAct->setObjectName("dashboardAct");
     connect(m_dashboardAct, &QAction::triggered, this, &MainWindow::openDashboard);
+
+    QMenu *stockMenu = menuBar()->addMenu(tr("Stock"));
+    m_predictAct = stockMenu->addAction(tr("Predictions"));
+    m_predictAct->setObjectName("predictAct");
+    connect(m_predictAct, &QAction::triggered, this, &MainWindow::openPredictions);
 
     updatePermissions();
 }
@@ -92,6 +99,17 @@ void MainWindow::openDashboard()
     m_dashboardWindow->activateWindow();
 }
 
+void MainWindow::openPredictions()
+{
+    if (!m_predictionWindow)
+        m_predictionWindow = new StockPredictionWindow(new SalesManager(m_session, this),
+                                                       new InventoryManager(m_session, this),
+                                                       this);
+    m_predictionWindow->show();
+    m_predictionWindow->raise();
+    m_predictionWindow->activateWindow();
+}
+
 void MainWindow::updatePermissions()
 {
     const QString role = m_session ? m_session->role() : QString();
@@ -104,5 +122,7 @@ void MainWindow::updatePermissions()
     if (role != "admin")
         m_usersAct->setEnabled(false);
     m_dashboardAct->setEnabled(!role.isEmpty());
+    if (m_predictAct)
+        m_predictAct->setEnabled(!role.isEmpty());
 }
 

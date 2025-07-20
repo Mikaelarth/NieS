@@ -9,6 +9,7 @@
 #include "main_window_test.h"
 #include <QAction>
 #include "dashboard/DashboardWindow.h"
+#include "stock/StockPredictionWindow.h"
 
 static void setupUsersTable()
 {
@@ -118,6 +119,27 @@ void MainWindowTest::dashboardActionOpens()
     dashAct->trigger();
     DashboardWindow *dash = win.findChild<DashboardWindow*>();
     QVERIFY(dash && dash->isVisible());
+}
+
+void MainWindowTest::predictionActionOpens()
+{
+    ScopedDb scoped;
+    UserManager um;
+    UserSession session(&um, &um);
+    QVERIFY(um.createUser("pred", "pw", "seller"));
+    QVERIFY(session.login("pred", "pw"));
+
+    MainWindow win(&session);
+    win.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&win));
+
+    QAction *predAct = win.findChild<QAction*>("predictAct");
+    QVERIFY(predAct);
+    QVERIFY(predAct->isEnabled());
+    QVERIFY(!win.findChild<StockPredictionWindow*>());
+    predAct->trigger();
+    StockPredictionWindow *predWin = win.findChild<StockPredictionWindow*>();
+    QVERIFY(predWin && predWin->isVisible());
 }
 
 

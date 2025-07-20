@@ -19,6 +19,7 @@ add_executable(NieSApp
     invoices/InvoicePrinter.cpp
     payments/PaymentProcessor.cpp
     stock/StockPrediction.cpp
+    stock/StockPredictionWindow.cpp
     sales/POSWindow.cpp
     sales/SalesReportWindow.cpp
     dashboard/DashboardWindow.cpp
