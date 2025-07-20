@@ -69,7 +69,7 @@ Les prochaines étapes concerneront l'amélioration de l'ergonomie et des tests 
 * Exemple concret d’intégration Qt/C++ avec MySQL (connexion, requêtes, gestion des erreurs).
 
 ## Build and Run
-Ensure Qt 5 (or later) with Widgets and SQL modules is installed.
+Ensure Qt 5 (or later) with Widgets, Charts, and SQL modules is installed.
 
 ```
 mkdir build && cd build
