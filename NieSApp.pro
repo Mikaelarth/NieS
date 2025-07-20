@@ -1,4 +1,4 @@
-QT += widgets sql network
+QT += widgets sql network charts
 CONFIG += c++11 console
 TEMPLATE = app
 TARGET = NieSApp
