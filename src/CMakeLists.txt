@@ -30,6 +30,8 @@ add_executable(NieSApp
     login/UserWindow.cpp
     NetworkMonitor.cpp
     UserSession.cpp
+    employees/EmployeeManager.cpp
+    barcode/BarcodeScanner.cpp
 )
 
 target_link_libraries(NieSApp Qt5::Widgets Qt5::Sql Qt5::Network Qt5::Charts)
