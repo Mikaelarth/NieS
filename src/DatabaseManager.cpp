@@ -145,7 +145,8 @@ bool DatabaseManager::synchronize()
     }
 
     const QStringList tables = {"users", "products", "inventory", "sales",
-                                "loyalty_accounts", "loyalty_transactions"};
+                                "loyalty_accounts", "loyalty_transactions",
+                                "employees", "shifts"};
     for (const QString &table : tables) {
         QSqlQuery local(m_db);
         if (!local.exec(QString("SELECT * FROM %1").arg(table)))
@@ -341,7 +342,8 @@ bool DatabaseManager::exportBackup(const QString &filePath)
 
     QJsonObject root;
     const QStringList tables = {"users", "products", "inventory", "sales",
-                                "loyalty_accounts", "loyalty_transactions"};
+                                "loyalty_accounts", "loyalty_transactions",
+                                "employees", "shifts"};
     for (const QString &table : tables) {
         QSqlQuery q(m_db);
         if (!q.exec(QString("SELECT * FROM %1").arg(table)))

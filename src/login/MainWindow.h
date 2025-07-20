@@ -9,6 +9,7 @@ class SalesReportWindow;
 class DashboardWindow;
 class StockPredictionWindow;
 class UserWindow;
+class EmployeeWindow;
 class LoyaltyWindow;
 class UserSession;
 class QAction;
@@ -24,6 +25,7 @@ private slots:
     void openPOS();
     void openReport();
     void openUsers();
+    void openEmployees();
     void openDashboard();
     void openPredictions();
     void openLoyalty();
@@ -35,6 +37,7 @@ private:
     QAction *m_posAct = nullptr;
     QAction *m_reportAct = nullptr;
     QAction *m_usersAct = nullptr;
+    QAction *m_employeesAct = nullptr;
     QAction *m_dashboardAct = nullptr;
     QAction *m_predictAct = nullptr;
     QAction *m_loyaltyAct = nullptr;
@@ -45,6 +48,7 @@ private:
     StockPredictionWindow *m_predictionWindow = nullptr;
     LoyaltyWindow *m_loyaltyWindow = nullptr;
     UserWindow *m_userWindow = nullptr;
+    EmployeeWindow *m_employeeWindow = nullptr;
 };
 
 #endif // MAINWINDOW_H

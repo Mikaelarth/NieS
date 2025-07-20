@@ -10,6 +10,8 @@
 #include "SalesManager.h"
 #include "loyalty/LoyaltyManager.h"
 #include "loyalty/LoyaltyWindow.h"
+#include "employees/EmployeeWindow.h"
+#include "employees/EmployeeManager.h"
 #include "InventoryManager.h"
 #include "UserSession.h"
 #include <QMenuBar>
@@ -44,6 +46,11 @@ MainWindow::MainWindow(UserSession *session, QWidget *parent)
     m_usersAct = userMenu->addAction(tr("Manage Users"));
     m_usersAct->setObjectName("usersAct");
     connect(m_usersAct, &QAction::triggered, this, &MainWindow::openUsers);
+
+    QMenu *empMenu = menuBar()->addMenu(tr("Employees"));
+    m_employeesAct = empMenu->addAction(tr("Manage Employees"));
+    m_employeesAct->setObjectName("employeesAct");
+    connect(m_employeesAct, &QAction::triggered, this, &MainWindow::openEmployees);
 
 
     m_dashboardAct = menuBar()->addAction(tr("Dashboard"));
@@ -96,6 +103,15 @@ void MainWindow::openUsers()
     m_userWindow->activateWindow();
 }
 
+void MainWindow::openEmployees()
+{
+    if (!m_employeeWindow)
+        m_employeeWindow = new EmployeeWindow(new EmployeeManager(this), this);
+    m_employeeWindow->show();
+    m_employeeWindow->raise();
+    m_employeeWindow->activateWindow();
+}
+
 void MainWindow::openDashboard()
 {
     if (!m_dashboardWindow)
@@ -137,6 +153,8 @@ void MainWindow::updatePermissions()
         m_manageAct->setEnabled(false);
         m_reportAct->setEnabled(false);
         m_usersAct->setEnabled(false);
+        if (m_employeesAct)
+            m_employeesAct->setEnabled(false);
     }
 
     if (!isAdmin && !isSeller)

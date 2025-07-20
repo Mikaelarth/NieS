@@ -28,6 +28,7 @@ add_executable(NieSApp
     login/LoginDialog.cpp
     login/MainWindow.cpp
     login/UserWindow.cpp
+    employees/EmployeeWindow.cpp
     NetworkMonitor.cpp
     UserSession.cpp
     employees/EmployeeManager.cpp

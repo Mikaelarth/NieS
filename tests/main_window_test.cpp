@@ -10,6 +10,7 @@
 #include <QAction>
 #include "dashboard/DashboardWindow.h"
 #include "stock/StockPredictionWindow.h"
+#include "employees/EmployeeWindow.h"
 
 static void setupUsersTable()
 {
@@ -57,9 +58,11 @@ void MainWindowTest::adminFullAccess()
 
     QAction *manageAct = win.findChild<QAction*>("manageAct");
     QAction *posAct = win.findChild<QAction*>("posAct");
-    QVERIFY(manageAct && posAct);
+    QAction *empAct = win.findChild<QAction*>("employeesAct");
+    QVERIFY(manageAct && posAct && empAct);
     QVERIFY(manageAct->isEnabled());
     QVERIFY(posAct->isEnabled());
+    QVERIFY(empAct->isEnabled());
 }
 
 void MainWindowTest::sellerLimitedAccess()
@@ -76,9 +79,11 @@ void MainWindowTest::sellerLimitedAccess()
 
     QAction *manageAct = win.findChild<QAction*>("manageAct");
     QAction *posAct = win.findChild<QAction*>("posAct");
-    QVERIFY(manageAct && posAct);
+    QAction *empAct = win.findChild<QAction*>("employeesAct");
+    QVERIFY(manageAct && posAct && empAct);
     QVERIFY(!manageAct->isEnabled());
     QVERIFY(posAct->isEnabled());
+    QVERIFY(!empAct->isEnabled());
 }
 
 void MainWindowTest::viewerNoAccess()
@@ -95,9 +100,11 @@ void MainWindowTest::viewerNoAccess()
 
     QAction *manageAct = win.findChild<QAction*>("manageAct");
     QAction *posAct = win.findChild<QAction*>("posAct");
-    QVERIFY(manageAct && posAct);
+    QAction *empAct = win.findChild<QAction*>("employeesAct");
+    QVERIFY(manageAct && posAct && empAct);
     QVERIFY(!manageAct->isEnabled());
     QVERIFY(!posAct->isEnabled());
+    QVERIFY(!empAct->isEnabled());
 }
 
 void MainWindowTest::dashboardActionOpens()
@@ -140,6 +147,27 @@ void MainWindowTest::predictionActionOpens()
     predAct->trigger();
     StockPredictionWindow *predWin = win.findChild<StockPredictionWindow*>();
     QVERIFY(predWin && predWin->isVisible());
+}
+
+void MainWindowTest::employeesActionOpens()
+{
+    ScopedDb scoped;
+    UserManager um;
+    UserSession session(&um, &um);
+    QVERIFY(um.createUser("emp", "pw", "admin"));
+    QVERIFY(session.login("emp", "pw"));
+
+    MainWindow win(&session);
+    win.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&win));
+
+    QAction *empAct = win.findChild<QAction*>("employeesAct");
+    QVERIFY(empAct);
+    QVERIFY(empAct->isEnabled());
+    QVERIFY(!win.findChild<EmployeeWindow*>());
+    empAct->trigger();
+    EmployeeWindow *empWin = win.findChild<EmployeeWindow*>();
+    QVERIFY(empWin && empWin->isVisible());
 }
 
 
