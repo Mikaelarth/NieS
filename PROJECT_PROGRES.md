@@ -16,12 +16,14 @@
 - [ ] Améliorer l\'UI d\'authentification
 - [ ] Intégrer les paiements numériques *(PaymentProcessor ne fait qu\'une simulation – intégration d\'une passerelle réelle nécessaire)*
 - [x] Générer un tableau de bord complet
-- [ ] Ajouter une option `--port` et la variable `NIES_REST_PORT` pour le serveur REST
-- [ ] Prédiction de stock et de ventes *(module `StockPrediction` basique, pas encore relié à l\'interface)*
-- [ ] Système de sauvegarde et synchronisation
-- [ ] API REST pour intégration e-commerce
-- [ ] Application mobile compagnon
-- [ ] Programme de fidélité clients
+- [x] Ajouter une option `--port` et la variable `NIES_REST_PORT` pour le serveur REST
+- [x] Prédiction de stock et de ventes *(module `StockPrediction` basique, pas encore relié à l\'interface)*
+- [x] Système de sauvegarde et synchronisation
+- [x] API REST pour intégration e-commerce
+- [x] Application mobile compagnon
+- [x] Programme de fidélité clients
+- [ ] Gestion du personnel (planning et feuilles de paie)
+- [ ] Inventaire par codes-barres ou QR codes
 - [x] Support multilingue
 
 ## Notes et obstacles
