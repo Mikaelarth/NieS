@@ -22,6 +22,9 @@ enum ProductRoles {
 #include <QFormLayout>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QFileDialog>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
 
 POSWindow::POSWindow(ProductManager *pm, SalesManager *sm, LoyaltyManager *lm, QWidget *parent)
     : QWidget(parent),
@@ -139,6 +142,33 @@ void POSWindow::onReturn()
 
 void POSWindow::onPrintInvoice()
 {
-    QMessageBox::information(this, tr("Invoice"), tr("Invoice printed."));
+    QSqlQuery q;
+    if (!q.exec("SELECT MAX(id) FROM sales") || !q.next()) {
+        QMessageBox::warning(this, tr("Error"), q.lastError().text());
+        return;
+    }
+    int saleId = q.value(0).toInt();
+    if (saleId <= 0) {
+        QMessageBox::warning(this, tr("Error"), tr("No sales recorded."));
+        return;
+    }
+
+    const QString path = askInvoicePath();
+    if (path.isEmpty())
+        return;
+
+    if (!m_printer->printInvoice(saleId, path)) {
+        QMessageBox::warning(this, tr("Error"), m_printer->lastError());
+        return;
+    }
+
+    QMessageBox::information(this, tr("Invoice"),
+                             tr("Invoice printed to %1").arg(path));
+}
+
+QString POSWindow::askInvoicePath()
+{
+    return QFileDialog::getSaveFileName(this, tr("Save Invoice"), QString(),
+                                        tr("Text Files (*.txt);;All Files (*)"));
 }
 
