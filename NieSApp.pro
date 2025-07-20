@@ -12,7 +12,7 @@ SOURCES += \
     src/SalesManager.cpp \
     src/UserSession.cpp \
     src/login/LoginDialog.cpp \
-    src/login/MainWindow.cpp
+    src/login/MainWindow.cppn\
     src/NetworkMonitor.cpp
 
 HEADERS += \
@@ -23,7 +23,7 @@ HEADERS += \
     src/SalesManager.h \
     src/UserSession.h \
     src/login/LoginDialog.h \
-    src/login/MainWindow.h
+    src/login/MainWindow.h\
     src/NetworkMonitor.h
 
 # Include config file for convenience
