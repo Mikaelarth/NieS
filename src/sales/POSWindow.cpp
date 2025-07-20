@@ -28,7 +28,7 @@ POSWindow::POSWindow(ProductManager *pm, SalesManager *sm, QWidget *parent)
     m_paymentBox(new QComboBox(this)),
     m_returnBtn(new QPushButton(tr("Return"), this)),
     m_invoiceBtn(new QPushButton(tr("Print Invoice"), this)),
-    m_payments(new PaymentProcessor(this)),
+    m_payments(new PaymentProcessor(nullptr, nullptr, this)),
     m_printer(new InvoicePrinter(this)),
     m_returns(new ReturnManager(this))
 {
