@@ -24,6 +24,7 @@ add_executable(NieSApp
     dashboard/DashboardWindow.cpp
     login/LoginDialog.cpp
     login/MainWindow.cpp
+    login/UserWindow.cpp
     NetworkMonitor.cpp
     UserSession.cpp
 )

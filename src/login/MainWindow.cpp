@@ -2,6 +2,8 @@
 #include "products/ProductWindow.h"
 #include "sales/POSWindow.h"
 #include "sales/SalesReportWindow.h"
+#include "login/UserWindow.h"
+#include "UserManager.h"
 #include "ProductManager.h"
 #include "SalesManager.h"
 #include "UserSession.h"
@@ -28,6 +30,11 @@ MainWindow::MainWindow(UserSession *session, QWidget *parent)
     m_reportAct = salesMenu->addAction(tr("Sales Report"));
     m_reportAct->setObjectName("reportAct");
     connect(m_reportAct, &QAction::triggered, this, &MainWindow::openReport);
+
+    QMenu *userMenu = menuBar()->addMenu(tr("Users"));
+    m_usersAct = userMenu->addAction(tr("Manage Users"));
+    m_usersAct->setObjectName("usersAct");
+    connect(m_usersAct, &QAction::triggered, this, &MainWindow::openUsers);
 
     updatePermissions();
 }
@@ -59,6 +66,15 @@ void MainWindow::openReport()
     m_reportWindow->activateWindow();
 }
 
+void MainWindow::openUsers()
+{
+    if (!m_userWindow)
+        m_userWindow = new UserWindow(new UserManager(this), this);
+    m_userWindow->show();
+    m_userWindow->raise();
+    m_userWindow->activateWindow();
+}
+
 void MainWindow::updatePermissions()
 {
     const QString role = m_session ? m_session->role() : QString();
@@ -68,5 +84,7 @@ void MainWindow::updatePermissions()
         m_posAct->setEnabled(false);
     if (role != "admin")
         m_reportAct->setEnabled(false);
+    if (role != "admin")
+        m_usersAct->setEnabled(false);
 }
 
