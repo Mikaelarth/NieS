@@ -17,7 +17,21 @@ SOURCES += \
     src/UserSession.cpp \
     src/login/LoginDialog.cpp \
     src/login/MainWindow.cpp \
-    src/NetworkMonitor.cpp
+    src/NetworkMonitor.cpp \
+    src/products/ProductWindow.cpp \
+    src/inventory/InventoryWindow.cpp \
+    src/returns/ReturnManager.cpp \
+    src/invoices/InvoicePrinter.cpp \
+    src/payments/PaymentProcessor.cpp \
+    src/stock/StockPrediction.cpp \
+    src/stock/StockPredictionWindow.cpp \
+    src/sales/POSWindow.cpp \
+    src/sales/SalesReportWindow.cpp \
+    src/dashboard/DashboardWindow.cpp \
+    src/login/UserWindow.cpp \
+    src/employees/EmployeeWindow.cpp \
+    src/employees/EmployeeManager.cpp \
+    src/barcode/BarcodeScanner.cpp
 
 HEADERS += \
     src/DatabaseManager.h \
@@ -30,7 +44,21 @@ HEADERS += \
     src/UserSession.h \
     src/login/LoginDialog.h \
     src/login/MainWindow.h\
-    src/NetworkMonitor.h
+    src/NetworkMonitor.h \
+    src/products/ProductWindow.h \
+    src/inventory/InventoryWindow.h \
+    src/returns/ReturnManager.h \
+    src/invoices/InvoicePrinter.h \
+    src/payments/PaymentProcessor.h \
+    src/stock/StockPrediction.h \
+    src/stock/StockPredictionWindow.h \
+    src/sales/POSWindow.h \
+    src/sales/SalesReportWindow.h \
+    src/dashboard/DashboardWindow.h \
+    src/login/UserWindow.h \
+    src/employees/EmployeeWindow.h \
+    src/employees/EmployeeManager.h \
+    src/barcode/BarcodeScanner.h
 
 # Include config file for convenience
 OTHER_FILES += config.ini
