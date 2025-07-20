@@ -41,6 +41,7 @@ bool RestServer::start(quint16 port)
 void RestServer::handleConnection()
 {
     QTcpSocket *socket = m_server->nextPendingConnection();
+    connect(socket, &QTcpSocket::disconnected, socket, &QTcpSocket::deleteLater);
     connect(socket, &QTcpSocket::readyRead, this, [=]() {
         QByteArray request = socket->readAll();
         QList<QByteArray> lines = request.split('\n');
