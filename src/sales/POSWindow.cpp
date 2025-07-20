@@ -4,6 +4,7 @@
 #include "payments/PaymentProcessor.h"
 #include "invoices/InvoicePrinter.h"
 #include "returns/ReturnManager.h"
+#include "loyalty/LoyaltyManager.h"
 
 namespace {
 enum ProductRoles {
@@ -15,16 +16,18 @@ enum ProductRoles {
 
 #include <QComboBox>
 #include <QSpinBox>
+#include <QLineEdit>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QFormLayout>
 #include <QMessageBox>
 #include <QInputDialog>
 
-POSWindow::POSWindow(ProductManager *pm, SalesManager *sm, QWidget *parent)
+POSWindow::POSWindow(ProductManager *pm, SalesManager *sm, LoyaltyManager *lm, QWidget *parent)
     : QWidget(parent),
       m_pm(pm),
     m_sm(sm),
+    m_loyalty(lm),
     m_paymentBox(new QComboBox(this)),
     m_returnBtn(new QPushButton(tr("Return"), this)),
     m_invoiceBtn(new QPushButton(tr("Print Invoice"), this)),
@@ -42,6 +45,9 @@ POSWindow::POSWindow(ProductManager *pm, SalesManager *sm, QWidget *parent)
     m_qtySpin->setMinimum(1);
     m_qtySpin->setMaximum(1000000);
 
+    m_loyaltyEdit = new QLineEdit(this);
+    m_loyaltyEdit->setObjectName("loyaltyEdit");
+
     m_sellBtn = new QPushButton(tr("Sell"), this);
     m_sellBtn->setObjectName("sellBtn");
     connect(m_sellBtn, &QPushButton::clicked, this, &POSWindow::onSell);
@@ -54,6 +60,7 @@ POSWindow::POSWindow(ProductManager *pm, SalesManager *sm, QWidget *parent)
     QFormLayout *form = new QFormLayout;
     form->addRow(tr("Product"), m_productBox);
     form->addRow(tr("Quantity"), m_qtySpin);
+    form->addRow(tr("Loyalty Phone"), m_loyaltyEdit);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addLayout(form);
@@ -102,6 +109,8 @@ void POSWindow::onSell()
         m_payments->processMobileMoney(total);
     else if (method == tr("QR Code"))
         m_payments->processQrCode(total);
+    if (m_loyalty && !m_loyaltyEdit->text().isEmpty())
+        m_loyalty->changePoints(m_loyaltyEdit->text(), qty, tr("sale"));
     m_qtySpin->setValue(1);
 }
 
@@ -120,6 +129,9 @@ void POSWindow::onReturn()
         QMessageBox::warning(this, tr("Error"), m_returns->lastError());
         return;
     }
+
+    if (m_loyalty && !m_loyaltyEdit->text().isEmpty())
+        m_loyalty->changePoints(m_loyaltyEdit->text(), -qty, tr("return"));
 
     loadProducts();
     QMessageBox::information(this, tr("Return"), tr("Return processed."));

@@ -8,6 +8,8 @@
 #include "UserManager.h"
 #include "ProductManager.h"
 #include "SalesManager.h"
+#include "loyalty/LoyaltyManager.h"
+#include "loyalty/LoyaltyWindow.h"
 #include "InventoryManager.h"
 #include "UserSession.h"
 #include <QMenuBar>
@@ -33,6 +35,10 @@ MainWindow::MainWindow(UserSession *session, QWidget *parent)
     m_reportAct = salesMenu->addAction(tr("Sales Report"));
     m_reportAct->setObjectName("reportAct");
     connect(m_reportAct, &QAction::triggered, this, &MainWindow::openReport);
+
+    m_loyaltyAct = salesMenu->addAction(tr("Loyalty"));
+    m_loyaltyAct->setObjectName("loyaltyAct");
+    connect(m_loyaltyAct, &QAction::triggered, this, &MainWindow::openLoyalty);
 
     QMenu *userMenu = menuBar()->addMenu(tr("Users"));
     m_usersAct = userMenu->addAction(tr("Manage Users"));
@@ -64,7 +70,9 @@ void MainWindow::openProducts()
 void MainWindow::openPOS()
 {
     if (!m_posWindow)
-        m_posWindow = new POSWindow(new ProductManager(m_session, this), new SalesManager(m_session, this), this);
+        m_posWindow = new POSWindow(new ProductManager(m_session, this),
+                                    new SalesManager(m_session, this),
+                                    new LoyaltyManager(this), this);
     m_posWindow->show();
     m_posWindow->raise();
     m_posWindow->activateWindow();
@@ -110,6 +118,15 @@ void MainWindow::openPredictions()
     m_predictionWindow->activateWindow();
 }
 
+void MainWindow::openLoyalty()
+{
+    if (!m_loyaltyWindow)
+        m_loyaltyWindow = new LoyaltyWindow(new LoyaltyManager(this), this);
+    m_loyaltyWindow->show();
+    m_loyaltyWindow->raise();
+    m_loyaltyWindow->activateWindow();
+}
+
 void MainWindow::updatePermissions()
 {
     const QString role = m_session ? m_session->role() : QString();
@@ -124,5 +141,7 @@ void MainWindow::updatePermissions()
     m_dashboardAct->setEnabled(!role.isEmpty());
     if (m_predictAct)
         m_predictAct->setEnabled(!role.isEmpty());
+    if (m_loyaltyAct)
+        m_loyaltyAct->setEnabled(!role.isEmpty());
 }
 

@@ -10,6 +10,8 @@ SOURCES += \
     src/ProductManager.cpp \
     src/InventoryManager.cpp \
     src/SalesManager.cpp \
+    src/loyalty/LoyaltyManager.cpp \
+    src/loyalty/LoyaltyWindow.cpp \
     src/UserSession.cpp \
     src/login/LoginDialog.cpp \
     src/login/MainWindow.cpp \
@@ -21,6 +23,8 @@ HEADERS += \
     src/ProductManager.h \
     src/InventoryManager.h \
     src/SalesManager.h \
+    src/loyalty/LoyaltyManager.h \
+    src/loyalty/LoyaltyWindow.h \
     src/UserSession.h \
     src/login/LoginDialog.h \
     src/login/MainWindow.h\
