@@ -27,6 +27,13 @@ bool DatabaseManager::open()
 {
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 
+    m_paymentApiKey = env.contains("NIES_PAYMENT_API_KEY")
+            ? env.value("NIES_PAYMENT_API_KEY")
+            : m_settings.value("payment/api_key").toString();
+    m_paymentEndpoint = env.contains("NIES_PAYMENT_ENDPOINT")
+            ? env.value("NIES_PAYMENT_ENDPOINT")
+            : m_settings.value("payment/endpoint").toString();
+
     m_offline = env.contains("NIES_DB_OFFLINE")
             ? !(env.value("NIES_DB_OFFLINE").isEmpty() || env.value("NIES_DB_OFFLINE") == "0" || env.value("NIES_DB_OFFLINE").toLower() == "false")
             : m_settings.value("database/offline", false).toBool();
