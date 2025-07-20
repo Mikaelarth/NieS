@@ -11,6 +11,7 @@ private slots:
     void sellerLimitedAccess();
     void viewerNoAccess();
     void dashboardActionOpens();
+    void predictionActionOpens();
 };
 
 #endif // MAIN_WINDOW_TEST_H
