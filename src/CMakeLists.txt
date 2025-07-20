@@ -5,7 +5,13 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt5 COMPONENTS Widgets Sql Network LinguistTools Charts REQUIRED)
+find_package(Qt6 COMPONENTS Widgets Sql Network NetworkInformation LinguistTools Charts)
+if(Qt6_FOUND)
+    set(QT_PACKAGE Qt6)
+else()
+    find_package(Qt5 COMPONENTS Widgets Sql Network LinguistTools Charts REQUIRED)
+    set(QT_PACKAGE Qt5)
+endif()
 
 add_executable(NieSApp
     main.cpp
@@ -36,13 +42,20 @@ add_executable(NieSApp
     barcode/BarcodeScanner.cpp
 )
 
-target_link_libraries(NieSApp Qt5::Widgets Qt5::Sql Qt5::Network Qt5::Charts)
+target_link_libraries(NieSApp ${QT_PACKAGE}::Widgets ${QT_PACKAGE}::Sql ${QT_PACKAGE}::Network ${QT_PACKAGE}::Charts)
+if(Qt6_FOUND)
+    target_link_libraries(NieSApp Qt6::NetworkInformation)
+endif()
 target_include_directories(NieSApp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(TS_FILES
     ${CMAKE_SOURCE_DIR}/translations/NieS_fr.ts
 )
-qt5_add_translation(QM_FILES ${TS_FILES})
+if(Qt6_FOUND)
+    qt6_add_translation(QM_FILES ${TS_FILES})
+else()
+    qt5_add_translation(QM_FILES ${TS_FILES})
+endif()
 add_custom_target(translations ALL DEPENDS ${QM_FILES})
 
 add_custom_command(TARGET NieSApp POST_BUILD

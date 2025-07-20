@@ -71,9 +71,10 @@ int main(int argc, char *argv[])
     }
 
     NetworkMonitor monitor;
-    QObject::connect(&monitor, &NetworkMonitor::connectivityChanged,
-                     [&db](bool online) {
-        if (online && db.isOffline())
+    monitor.startMonitoring();
+    QObject::connect(&monitor, &NetworkMonitor::networkStatusChanged,
+                     [&db](NetworkMonitor::Reachability r) {
+        if (r != NetworkMonitor::Reachability::Disconnected && db.isOffline())
             db.synchronize();
     });
 
