@@ -15,3 +15,6 @@ HEADERS += $$files($$PWD/src/*.h, true)
 
 # Include config file for convenience
 OTHER_FILES += config.ini
+
+# Translation files for internationalization
+TRANSLATIONS += translations/NieS_fr.ts
