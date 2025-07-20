@@ -2,6 +2,7 @@
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
 #include <QVariant>
+#include <QVariantMap>
 #include <QCryptographicHash>
 #include <QUuid>
 
@@ -81,6 +82,23 @@ bool UserManager::authenticate(const QString &username, const QString &password)
     m_currentUser = username;
     m_currentRole = role;
     return true;
+}
+
+QList<QVariantMap> UserManager::listUsers()
+{
+    QList<QVariantMap> users;
+    QSqlQuery query("SELECT username, role FROM users ORDER BY id");
+    if (!query.exec()) {
+        m_lastError = query.lastError().text();
+        return users;
+    }
+    while (query.next()) {
+        QVariantMap u;
+        u.insert("username", query.value(0));
+        u.insert("role", query.value(1));
+        users.append(u);
+    }
+    return users;
 }
 
 QString UserManager::lastError() const

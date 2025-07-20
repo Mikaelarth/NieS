@@ -7,6 +7,7 @@ find_package(Qt5 COMPONENTS Test Sql Widgets Network REQUIRED)
 set(TEST_SOURCES
     database_test.cpp
     login_test.cpp
+    user_window_test.cpp
     product_window_test.cpp
     pos_window_test.cpp
     sales_report_window_test.cpp
@@ -31,6 +32,7 @@ set(TEST_SOURCES
     ${CMAKE_SOURCE_DIR}/src/dashboard/DashboardWindow.cpp
     ${CMAKE_SOURCE_DIR}/src/login/LoginDialog.cpp
     ${CMAKE_SOURCE_DIR}/src/login/MainWindow.cpp
+    ${CMAKE_SOURCE_DIR}/src/login/UserWindow.cpp
     ${CMAKE_SOURCE_DIR}/src/UserSession.cpp
 )
 

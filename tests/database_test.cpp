@@ -14,6 +14,7 @@
 #include "payment_processor_test.h"
 #include "dashboard_window_test.h"
 #include "stock_prediction_test.h"
+#include "user_window_test.h"
 #include <QTemporaryDir>
 #include <QProcess>
 #include <QRandomGenerator>
@@ -745,6 +746,8 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&paymentTest, argc, argv);
     DashboardWindowTest dashboardTest;
     status |= QTest::qExec(&dashboardTest, argc, argv);
+    UserWindowTest userWinTest;
+    status |= QTest::qExec(&userWinTest, argc, argv);
     StockPredictionTest stockTest;
     status |= QTest::qExec(&stockTest, argc, argv);
     return status;

@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QString>
+#include <QList>
+#include <QVariantMap>
 
 class UserManager : public QObject
 {
@@ -14,6 +16,7 @@ public:
     bool deleteUser(const QString &username);
     bool updateUserRole(const QString &username, const QString &newRole);
     bool authenticate(const QString &username, const QString &password);
+    QList<QVariantMap> listUsers();
 
     QString currentUser() const;
     QString currentRole() const;
