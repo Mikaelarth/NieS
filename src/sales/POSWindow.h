@@ -29,6 +29,9 @@ private slots:
     void onReturn();
     void onPrintInvoice();
 
+protected:
+    virtual QString askInvoicePath();
+
 private:
     ProductManager *m_pm;
     SalesManager *m_sm;
