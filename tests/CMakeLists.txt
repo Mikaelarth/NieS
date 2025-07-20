@@ -19,6 +19,8 @@ set(TEST_SOURCES
     dashboard_window_test.cpp
     stock_prediction_test.cpp
     loyalty_manager_test.cpp
+    employee_manager_test.cpp
+    barcode_scanner_test.cpp
     config_option_test.cpp
     ${CMAKE_SOURCE_DIR}/src/DatabaseManager.cpp
     ${CMAKE_SOURCE_DIR}/src/UserManager.cpp
@@ -41,6 +43,8 @@ set(TEST_SOURCES
     ${CMAKE_SOURCE_DIR}/src/login/UserWindow.cpp
     ${CMAKE_SOURCE_DIR}/src/api/RestServer.cpp
     ${CMAKE_SOURCE_DIR}/src/UserSession.cpp
+    ${CMAKE_SOURCE_DIR}/src/employees/EmployeeManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/barcode/BarcodeScanner.cpp
 )
 
 add_executable(nies_tests ${TEST_SOURCES})

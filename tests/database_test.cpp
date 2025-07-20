@@ -16,6 +16,8 @@
 #include "stock_prediction_test.h"
 #include "user_window_test.h"
 #include "config_option_test.h"
+#include "employee_manager_test.h"
+#include "barcode_scanner_test.h"
 #include <QTemporaryDir>
 #include <QProcess>
 #include <QRandomGenerator>
@@ -753,6 +755,10 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&configOptTest, argc, argv);
     StockPredictionTest stockTest;
     status |= QTest::qExec(&stockTest, argc, argv);
+    EmployeeManagerTest employeeTest;
+    status |= QTest::qExec(&employeeTest, argc, argv);
+    BarcodeScannerTest barcodeTest;
+    status |= QTest::qExec(&barcodeTest, argc, argv);
     return status;
 }
 
