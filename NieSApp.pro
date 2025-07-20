@@ -2,6 +2,7 @@ QT += widgets sql network
 CONFIG += c++11 console
 TEMPLATE = app
 TARGET = NieSApp
+INCLUDEPATH += $$PWD/src
 
 SOURCES += \
     src/main.cpp \
