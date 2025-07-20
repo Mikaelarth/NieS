@@ -164,15 +164,25 @@ startup.
 
 ### Payment Processing (Simulated)
 
-`PaymentProcessor` sends an HTTP request to the configured payment gateway for
-every card, mobile money or QR code payment. The gateway URL and API key can be
-supplied in the environment as `NIES_PAYMENT_ENDPOINT` and
-`NIES_PAYMENT_API_KEY` or set in the `[payment]` section of `config.ini`
-(`endpoint` and `api_key`). Transactions are still simulated, so the gateway
-returns success without charging anything.
+`PaymentProcessor` sends an **actual** HTTP `POST` request to the configured
+payment gateway each time a card, mobile money or QR code payment is
+performed. The gateway URL and API key must be provided via the environment
+variables `NIES_PAYMENT_ENDPOINT` and `NIES_PAYMENT_API_KEY` or in the
+`[payment]` section of `config.ini` (`endpoint` and `api_key`).
 
-Integrate a real provider by implementing the network logic in
-`PaymentProcessor` and ensuring these credentials point to a live service.
+The request body is JSON of the form:
+
+```json
+{"method": "card", "amount": 42.0, "api_key": "<your key>"}
+```
+
+The gateway should return a JSON object `{"success": true}` on success or
+`{"success": false, "error": "message"}` when the payment fails. Transactions
+are still simulated, so the default example endpoint simply returns success
+without charging anything.
+
+Integrate a real provider by extending the network logic in `PaymentProcessor`
+and pointing these credentials to a live service.
 
 ### User Sessions and Permissions
 
