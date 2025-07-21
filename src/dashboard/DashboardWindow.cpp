@@ -16,7 +16,7 @@
 #include <QtCharts/QBarCategoryAxis>
 #include <QtCharts/QPieSeries>
 
-QT_CHARTS_USE_NAMESPACE
+using namespace QtCharts;
 
 DashboardWindow::DashboardWindow(SalesManager *sm, InventoryManager *im,
                                  int interval, QWidget *parent)

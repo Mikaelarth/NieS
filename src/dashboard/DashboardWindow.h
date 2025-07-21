@@ -9,10 +9,9 @@
 #include <QtCharts/QBarSet>
 #include <QtCharts/QBarCategoryAxis>
 #include <QtCharts/QPieSeries>
+#include <QListWidget>
 
-QT_CHARTS_USE_NAMESPACE
-
-class QListWidget;
+using namespace QtCharts;
 #include "stock/StockPrediction.h"
 
 class SalesManager;
