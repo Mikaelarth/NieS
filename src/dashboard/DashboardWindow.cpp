@@ -9,6 +9,7 @@
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlDatabase>
 #include <QStringList>
+#include <QtCharts/QChartGlobal>
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
 #include <QtCharts/QBarSeries>
@@ -16,7 +17,7 @@
 #include <QtCharts/QBarCategoryAxis>
 #include <QtCharts/QPieSeries>
 
-using namespace QtCharts;
+QT_CHARTS_USE_NAMESPACE
 
 DashboardWindow::DashboardWindow(SalesManager *sm, InventoryManager *im,
                                  int interval, QWidget *parent)
