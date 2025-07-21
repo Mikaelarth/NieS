@@ -4,7 +4,10 @@
 #include <QWidget>
 #include <QTimer>
 #include <QtCharts/QChartView>
+#include <QtCharts/QChart>
 #include <QtCharts/QBarSeries>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QBarCategoryAxis>
 #include <QtCharts/QPieSeries>
 
 class QListWidget;
@@ -14,12 +17,6 @@ class SalesManager;
 class InventoryManager;
 
 class QLabel;
-
-namespace QtCharts {
-class QChartView;
-class QBarSeries;
-class QPieSeries;
-}
 
 class DashboardWindow : public QWidget
 {
