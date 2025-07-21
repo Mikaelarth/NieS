@@ -108,7 +108,8 @@ void DashboardWindow::refresh()
         chart->addSeries(series);
         auto *axis = new QBarCategoryAxis(chart);
         axis->append(categories);
-        chart->setAxisX(axis, series);
+        chart->addAxis(axis, Qt::AlignBottom);
+        series->attachAxis(axis);
         chart->createDefaultAxes();
     }
 
