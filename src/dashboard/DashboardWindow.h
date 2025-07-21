@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QTimer>
+#include <QtCharts/QChartGlobal>
 #include <QtCharts/QChartView>
 #include <QtCharts/QChart>
 #include <QtCharts/QBarSeries>
@@ -11,7 +12,7 @@
 #include <QtCharts/QPieSeries>
 #include <QListWidget>
 
-using namespace QtCharts;
+QT_CHARTS_USE_NAMESPACE
 #include "stock/StockPrediction.h"
 
 class SalesManager;
