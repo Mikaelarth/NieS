@@ -16,6 +16,8 @@
 #include <QtCharts/QBarCategoryAxis>
 #include <QtCharts/QPieSeries>
 
+QT_CHARTS_USE_NAMESPACE
+
 DashboardWindow::DashboardWindow(SalesManager *sm, InventoryManager *im,
                                  int interval, QWidget *parent)
     : QWidget(parent), m_sm(sm), m_im(im)
@@ -35,15 +37,15 @@ DashboardWindow::DashboardWindow(SalesManager *sm, InventoryManager *im,
     m_stockLabel->setObjectName("stockLabel");
     layout->addWidget(m_stockLabel);
 
-    auto *salesChart = new QtCharts::QChart();
+    auto *salesChart = new QChart();
     salesChart->setTitle(tr("Daily Revenue"));
-    m_salesChart = new QtCharts::QChartView(salesChart, this);
+    m_salesChart = new QChartView(salesChart, this);
     m_salesChart->setObjectName("salesChart");
     layout->addWidget(m_salesChart);
 
-    auto *stockChart = new QtCharts::QChart();
+    auto *stockChart = new QChart();
     stockChart->setTitle(tr("Inventory Levels"));
-    m_stockChart = new QtCharts::QChartView(stockChart, this);
+    m_stockChart = new QChartView(stockChart, this);
     m_stockChart->setObjectName("stockChart");
     layout->addWidget(m_stockChart);
 
@@ -94,16 +96,16 @@ void DashboardWindow::refresh()
         auto chart = m_salesChart->chart();
         chart->removeAllSeries();
         QStringList categories;
-        auto *set = new QtCharts::QBarSet(tr("Revenue"));
+        auto *set = new QBarSet(tr("Revenue"));
         QSqlQuery q("SELECT sale_date, SUM(total) FROM sales GROUP BY sale_date ORDER BY sale_date");
         while (q.next()) {
             *set << q.value(1).toDouble();
             categories << q.value(0).toString();
         }
-        auto *series = new QtCharts::QBarSeries(chart);
+        auto *series = new QBarSeries(chart);
         series->append(set);
         chart->addSeries(series);
-        auto *axis = new QtCharts::QBarCategoryAxis(chart);
+        auto *axis = new QBarCategoryAxis(chart);
         axis->append(categories);
         chart->setAxisX(axis, series);
         chart->createDefaultAxes();
@@ -112,7 +114,7 @@ void DashboardWindow::refresh()
     if (m_stockChart) {
         auto chart = m_stockChart->chart();
         chart->removeAllSeries();
-        auto *series = new QtCharts::QPieSeries(chart);
+        auto *series = new QPieSeries(chart);
         QSqlQuery q("SELECT product_id, quantity FROM inventory");
         while (q.next())
             series->append(QString::number(q.value(0).toInt()), q.value(1).toInt());
