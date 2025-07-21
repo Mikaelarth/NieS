@@ -10,6 +10,8 @@
 #include <QtCharts/QBarCategoryAxis>
 #include <QtCharts/QPieSeries>
 
+QT_CHARTS_USE_NAMESPACE
+
 class QListWidget;
 #include "stock/StockPrediction.h"
 
@@ -38,8 +40,8 @@ private:
     QLabel *m_revenueLabel = nullptr;
     QLabel *m_unitsLabel = nullptr;
     QLabel *m_stockLabel = nullptr;
-    QtCharts::QChartView *m_salesChart = nullptr;
-    QtCharts::QChartView *m_stockChart = nullptr;
+    QChartView *m_salesChart = nullptr;
+    QChartView *m_stockChart = nullptr;
 };
 
 #endif // DASHBOARDWINDOW_H
